@@ -3,6 +3,7 @@
 
 # the non-standard '-' NAs are coerced.
 # NA values removed.
+# contains all metrics.
 df_serum_chem_6 = pd.read_csv( r'U:\kidney\df_serum_chem_6.csv' )
 
 
@@ -18,6 +19,8 @@ df_serum_chem_6['value'] = pd.to_numeric( df_serum_chem_6['value'] , errors='coe
 
 df_urea_4.to_csv( r'U:\kidney\df_urea_4.csv' )
 
+# the non-standard '-' NAs are coerced.
+# NA values removed.
 df_urea_4 = pd.read_csv( r'U:\kidney\df_urea_4.csv' )
 
 
@@ -132,6 +135,9 @@ result_full = model_full.fit()
 
 # %%
 
+# the reference here is DBD-ecosol : not written in the resutls. 
+# 25 rows ( from 'Intercept until the end' ).
+
 result_full.summary()
 
     # Out[50]: 
@@ -181,8 +187,12 @@ result_full.summary()
 # %%
 # %%
 
+# the conrast between HTK & NMP is not written in the summary above.
+    # it should be derived separately.
+
 # Create a contrast vector (as a 1 x k_fe array) filled with zeros.
 contrast = np.zeros((1, result_full.k_fe))
+
 
 # Set the value corresponding to C(treatment)[T.DBD-HTK] to 1
 # and the coefficient for C(treatment)[T.NMP] to -1.
@@ -205,161 +215,354 @@ print( t_test_DBD_HTK_NMP.summary() )
     # ==============================================================================
 
 # %%
-# %%
 
-# Suppose you've performed three pairwise contrasts and obtained p-values:
-# 1. Comparison: DBD-HTK vs DBD-Ecosol (this is usually given directly in the model summary)
-# 2. Comparison: NMP vs DBD-Ecosol (also directly available)
-# 3. Comparison: DBD-HTK vs NMP (from your custom contrast test)
-#
-# For demonstration, let's assume these p-values (example values):
-pvals = np.array([0.844, 0.804, 0.945])
+#  ?  :  8 * 3 = 24  "   8 time-points & 3 pairwise comparisons ( between DBD-HTK , ... ).
+result_full.k_fe
+    # Out[21]: 24
 
-# Apply Bonferroni correction for 3 tests
-reject, pvals_corrected, alphacSidak, alphacBonf = multipletests(pvals, alpha=0.05, method="bonferroni")
 
-print("Raw p-values:", pvals)
-    # Raw p-values: [0.844 0.804 0.945]
+contrast
+# Out[23]: 
+    # array([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+    #         0., 0., 0., 0., 0., 0., 0., 0.]])
 
-print("Adjusted p-values (Bonferroni):", pvals_corrected)
-    # Adjusted p-values (Bonferroni): [1. 1. 1.]
 
-print("Reject at alpha=0.05:", reject)
-    # Reject at alpha=0.05: [False False False]
-
+# after editing particular values.
+contrast
+    # Out[27]: 
+    # array([[ 0.,  1., -1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+    #          0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]])
 
 # %%
+# %%
+
+# for each metric, there is one residuals data  =>  1 q-q plot.
 
 # Extract residuals from your fitted model
 resid = result_full.resid
+
+type(resid)
+    # Out[29]: pandas.core.series.Series
+
+resid.shape
+    # Out[30]: (147,)
+
+resid[:4]
+    # Out[31]: 
+    # 0   -7.465841
+    # 1   -3.453517
+    # 2    0.667912
+    # 3    4.419341
+    # dtype: float64
+
+# %%
 
 # Produce a Q-Q plot
 sm.qqplot(resid, line='45')
 plt.title("Q-Q Plot of Residuals")
 plt.show()
 
-
 plt.savefig( r'U:\kidney\plot\serum_chem_q_q.pdf' ) 
 
 # %%
 # %%
 
-# import pandas as pd
-# import numpy as np
-# import statsmodels.formula.api as smf
-# import statsmodels.api as sm
-# import matplotlib.pyplot as plt
-# from statsmodels.stats.multitest import multipletests
-
-# Suppose 'df' is your DataFrame with columns: 
-# 'metric' (e.g., "Urea_serum", "Creatinin_serum", etc.),
-# 'value', 'treatment' (e.g., "DBD-HTK", "DBD-Ecosol", "NMP"),
-# 'time', and 'sample_ID'
-
-# List to store the pairwise comparison results.
-results_list = []
-
-# Get the list of unique metrics.
-metrics = df_serum_chem_6['metric'].unique()
-
-for met in metrics:
-    # resetting index, as after slicing the original dataframe, the index will have interrupted numbers ( see above ).
-    data_met = df_serum_chem_6[ df_serum_chem_6['metric'] == met ].reset_index(drop=True)
-    
-    # Optionally, you may also want to check that each treatment group has enough pigs
-    # if data_met.shape[0] < 10 or data_met['sample_ID'].nunique() < 5:
-    #     print(f"Skipping {met} due to insufficient data")
-    #     continue
-    
-    # Fit the mixed-effects model. We assume that the baseline (reference) for treatment is DBD-Ecosol.
-    try:
-        model = smf.mixedlm("value ~ C(treatment) * C(time)", 
-                            data=data_met, 
-                            groups=data_met["sample_ID"])
-        result = model.fit(reml=True)
-    except Exception as e:
-        print(f"Model failed for {met}: {e}")
-        continue
-    
-    # --- Extract pairwise p-values for 'treatment' ---
-    # 1. DBD-HTK vs DBD-Ecosol:
-    #    Directly from the model, the coefficient for C(treatment)[T.DBD-HTK] represents this difference.
-    try:
-        p_val_1 = result.pvalues["C(treatment)[T.DBD-HTK]"]
-    except KeyError:
-        p_val_1 = np.nan
-
-    # 2. NMP vs DBD-Ecosol:
-    try:
-        p_val_2 = result.pvalues["C(treatment)[T.NMP]"]
-    except KeyError:
-        p_val_2 = np.nan
-
-    # 3. DBD-HTK vs NMP:
-    #    We need to form the contrast: [0, 1, -1, 0,...]
-    k_fe = result.k_fe  # total number of fixed effect parameters
-    if k_fe < 3:
-        print(f"Not enough fixed effects in model for metric {met}")
-        continue
-    contrast = np.zeros((1, k_fe))
-    contrast[0, 1] = 1   # coefficient for DBD-HTK
-    contrast[0, 2] = -1  # coefficient for NMP
-    
-    contrast_test = result.t_test(contrast)
-    # Ensure we get a scalar p-value:
-    p_val_3 = float(contrast_test.pvalue)
-    
-    # Gather the three original p-values in a list
-    orig_pvals = np.array([p_val_1, p_val_2, p_val_3])
-    comp_names = ["DBD-HTK vs DBD-Ecosol", "NMP vs DBD-Ecosol", "DBD-HTK vs NMP"]
-    
-    # Adjust the three p-values; here we use the Bonferroni method.
-    # The adjustment is per metric; you can also pool over metrics if desired.
-    reject, pvals_corrected, alphacSidak, alphacBonf = multipletests(orig_pvals, alpha=0.05, method="bonferroni")
-    
-    # Log the results for each pairwise comparison under this metric.
-    for comp, orig_p, corr_p in zip(comp_names, orig_pvals, pvals_corrected):
-        results_list.append({
-            "metric": met,
-            "comparison": comp,
-            "p_original": orig_p,
-            "p_adjusted": corr_p
-        })
-    
-    # --- Generate and save Q-Q plot of residuals ---
-    fig = sm.qqplot(result.resid, line='45')
-    plt.title(f"Q-Q Plot of Residuals for {met}")
-    plt.savefig( fr'U:\kidney\plot\q_q\qqplot_{met}.pdf' )
-    plt.close()
-
-# Convert the results list to a DataFrame.
-result_all = pd.DataFrame(results_list)
-# print("Pairwise treatment comparison p-values for each metric:")
-# print(results_df)
-
-# Optionally, save these results to a CSV file.
-result_all.to_csv( r'U:\kidney\pairwise_treatment_comparisons.csv' , index=False)
-result_all.to_excel( r'U:\kidney\pairwise_treatment_comparisons.xlsx' , index=False)
+# %%
 
 
 
 # %%
 
-result_all.shape
-    # Out[33]: (27, 4)
+# import os
+# import numpy as np
+# import pandas as pd
+# import statsmodels.formula.api as smf
+# import statsmodels.api as sm
+# from statsmodels.stats.multitest import multipletests
+
+# import matplotlib.pyplot as plt
+# %matplotlib qt
+
+# %%
+
+# Define the folder for saving Q-Q plots
+qq_plot_folder = r"U:\kidney\plot\q_q"
+if not os.path.exists(qq_plot_folder):
+    os.makedirs(qq_plot_folder)
 
 
-result_all[:4]
+# --- Helper Functions ---
+# These functions now accept both the fitted model and its parameters list.
+def get_param_index(param_name, params_list):
+    """Return the index of a parameter in the model's coefficients (or None if not found)."""
+    try:
+        return params_list.index(param_name)
+    except ValueError:
+        return None
 
+def build_contrast_vs_baseline(time_point, treatment, params_list, result):
+    """
+    Build a contrast vector to obtain the effect for a given treatment relative to the reference (DBD-Ecosol)
+    at a specified time point.
+    For the baseline time ("Explantation"), the contrast returns just the main effect.
+    For other time points, the interaction effect is added.
+    """
+    contrast = np.zeros((1, result.k_fe))
+    main_param = f"C(treatment)[T.{treatment}]"
+    idx_main = get_param_index(main_param, params_list)
+    if idx_main is None:
+        print(f"Main parameter {main_param} not found.")
+        return None
+    contrast[0, idx_main] = 1
+    if time_point != "Explantation":
+        interaction_param = f"C(treatment)[T.{treatment}]:C(time)[T.{time_point}]"
+        idx_inter = get_param_index(interaction_param, params_list)
+        if idx_inter is None:
+            print(f"Interaction parameter {interaction_param} not found for time {time_point}.")
+            return None
+        contrast[0, idx_inter] = 1
+    return contrast
+
+def build_contrast_htk_vs_nmp(time_point, params_list, result):
+    """
+    Build the contrast vector for the difference between DBD-HTK and NMP at a given time point.
+    This contrast equals:
+         (effect for DBD-HTK relative to baseline) - (effect for NMP relative to baseline).
+    """
+    contr_htk = build_contrast_vs_baseline(time_point, "DBD-HTK", params_list, result)
+    contr_nmp = build_contrast_vs_baseline(time_point, "NMP", params_list, result)
+    if (contr_htk is None) or (contr_nmp is None):
+        return None
+    return contr_htk - contr_nmp
+
+# --- Main Processing for All Metrics ---
+# Define the ordered time points (ensure these match the levels in your "time" variable).
+time_points = ["Explantation", "POD_1", "POD_2", "POD_3", "POD_4", "POD_5", "POD_6", "POD_7"]
+
+# This list will hold the results for every modality/metric.
+results_all = []
+
+# Loop over each unique test modality in df_serum_chem.
+for met in df_serum_chem_6['metric'].unique():
+    # Subset the data for the current modality.
+    df_met = df_serum_chem_6[ df_serum_chem_6["metric"] == met ].copy()
+    
+    # (Optional) Check that there is a sufficient number of observations and subjects.
+    # if df_met.shape[0] < 10 or df_met["sample_ID"].nunique() < 5:
+    #     print(f"Skipping metric {met} due to insufficient data.")
+    #     continue
+
+    # Fit the mixed-effects model.
+    try:
+        model = smf.mixedlm("value ~ C(treatment) * C(time)", data=df_met, groups=df_met["sample_ID"])
+        result_metric = model.fit(reml=True)
+    except Exception as e:
+        print(f"Model did not converge for metric {met}: {e}")
+        continue
+
+    # Get current metric's parameter names.
+    params_list_metric = result_metric.params.index.tolist()
+
+    # List to hold the results for this modality.
+    results_metric = []
+
+    # For each time point, compute the three pairwise comparisons.
+    for tp in time_points:
+        # 1. DBD-HTK vs DBD-Ecosol  
+        contrast_htk = build_contrast_vs_baseline(tp, "DBD-HTK", params_list_metric, result_metric)
+        if contrast_htk is not None:
+            test_htk = result_metric.t_test(contrast_htk)
+            results_metric.append({
+                "metric": met,
+                "time_point": tp,
+                "comparison": "DBD-HTK vs DBD-Ecosol",
+                "contrast_estimate": test_htk.effect.item(),
+                "p_value": test_htk.pvalue.item()
+            })
+        # 2. NMP vs DBD-Ecosol  
+        contrast_nmp = build_contrast_vs_baseline(tp, "NMP", params_list_metric, result_metric)
+        if contrast_nmp is not None:
+            test_nmp = result_metric.t_test(contrast_nmp)
+            results_metric.append({
+                "metric": met,
+                "time_point": tp,
+                "comparison": "NMP vs DBD-Ecosol",
+                "contrast_estimate": test_nmp.effect.item(),
+                "p_value": test_nmp.pvalue.item()
+            })
+        # 3. DBD-HTK vs NMP  
+        contrast_htk_nmp = build_contrast_htk_vs_nmp(tp, params_list_metric, result_metric)
+        if contrast_htk_nmp is not None:
+            test_htk_nmp = result_metric.t_test(contrast_htk_nmp)
+            results_metric.append({
+                "metric": met,
+                "time_point": tp,
+                "comparison": "DBD-HTK vs NMP",
+                "contrast_estimate": test_htk_nmp.effect.item(),
+                "p_value": test_htk_nmp.pvalue.item()
+            })
+    
+    # Convert the results for the current metric into a DataFrame.
+    df_metric_results = pd.DataFrame(results_metric)
+    
+    if df_metric_results.shape[0] == 0:
+        continue
+
+
+    # --- Global Multiple-Test Correction (per modality) ---
+    # Correct all comparisons for this metric at once.
+    # correcting the p-values based on all 24 p-values :  8*3 = 24 values
+        # 8 time points 
+        # 3 p-values / time-point.
+    pvals_global = df_metric_results['p_value'].values
+    reject_global, pvals_corr_global, _, _ = multipletests(pvals_global, alpha=0.05, method='bonferroni')
+    df_metric_results['p_value_adjusted_global'] = pvals_corr_global
+    df_metric_results['reject_null_global'] = reject_global
+
+    # --- Per-Time-Point Correction (per modality) ---
+    # correcting the p-values for each time-point separately.
+        # each time point has 3 p-values : these 3 would be incorporate together separately for each of th 8 corrections.
+    df_metric_results['p_value_adjusted_per_tp'] = np.nan
+    df_metric_results['reject_null_per_tp'] = np.nan
+    for tp in df_metric_results['time_point'].unique():
+        idx = df_metric_results['time_point'] == tp
+        pvals_tp = df_metric_results.loc[idx, 'p_value'].values
+        reject_tp, pvals_corr_tp, _, _ = multipletests(pvals_tp, alpha=0.05, method='bonferroni')
+        df_metric_results.loc[idx, 'p_value_adjusted_per_tp'] = pvals_corr_tp
+        df_metric_results.loc[idx, 'reject_null_per_tp'] = reject_tp
+    
+    # Append the current modality's results to the overall list.
+    results_all.append(df_metric_results)
+
+
+        
+    # Generate Q-Q plot for the residuals of the model for this metric
+    # for each metric, there is one residuals data  =>  1 q-q plot.
+    fig = sm.qqplot(result_metric.resid, line='45')
+    plt.title(f"Q-Q Plot for {met}")
+    # Save the plot in the designated folder
+    plot_filename = os.path.join(qq_plot_folder, f"qqplot_{met}.pdf")
+    plt.savefig(plot_filename)
+    plt.close()  # Close the figure to free memory
+
+
+# Concatenate the results from all modalities into one DataFrame.
+final_results_df = pd.concat(results_all, axis=0).reset_index(drop=True)
+
+# print("Final results for all test modalities (each modality's 24 comparisons) with both correction methods:")
+# print(final_results_df)
+
+# %%
+
+# u:\kidney\stat_serum_chem.py:993: FutureWarning: 
+    # Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. 
+    # Value '[False False False]' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+    #   df_metric_results.loc[idx, 'reject_null_per_tp'] = reject_tp
+
+# %%
+
+final_results_df.shape
+    # Out[7]: (216, 9)
+
+# %%
+
+final_results_df.to_csv( r'U:\kidney\final_results_df.csv' , index=False)
+final_results_df.to_excel( r'U:\kidney\final_results_df.xlsx' , index=False)
+
+# %%
 # %%
 
 # explore
-len( results_list )
-    # Out[38]: 27
+params_list_metric
+    # Out[41]: 
+    # ['Intercept',
+    #  'C(treatment)[T.DBD-HTK]',
+    #  'C(treatment)[T.NMP]',
+    #  'C(time)[T.POD_1]',
+    #  'C(time)[T.POD_2]',
+    #  'C(time)[T.POD_3]',
+    #  'C(time)[T.POD_4]',
+    #  'C(time)[T.POD_5]',
+    #  'C(time)[T.POD_6]',
+    #  'C(time)[T.POD_7]',
+    #  'C(treatment)[T.DBD-HTK]:C(time)[T.POD_1]',
+    #  'C(treatment)[T.NMP]:C(time)[T.POD_1]',
+    #  'C(treatment)[T.DBD-HTK]:C(time)[T.POD_2]',
+    #  'C(treatment)[T.NMP]:C(time)[T.POD_2]',
+    #  'C(treatment)[T.DBD-HTK]:C(time)[T.POD_3]',
+    #  'C(treatment)[T.NMP]:C(time)[T.POD_3]',
+    #  'C(treatment)[T.DBD-HTK]:C(time)[T.POD_4]',
+    #  'C(treatment)[T.NMP]:C(time)[T.POD_4]',
+    #  'C(treatment)[T.DBD-HTK]:C(time)[T.POD_5]',
+    #  'C(treatment)[T.NMP]:C(time)[T.POD_5]',
+    #  'C(treatment)[T.DBD-HTK]:C(time)[T.POD_6]',
+    #  'C(treatment)[T.NMP]:C(time)[T.POD_6]',
+    #  'C(treatment)[T.DBD-HTK]:C(time)[T.POD_7]',
+    #  'C(treatment)[T.NMP]:C(time)[T.POD_7]',
+    #  'Group Var']
+
+# %%
+
+# useless
+
+df_serum_chem_6.info()
+    # <class 'pandas.core.frame.DataFrame'>
+    # RangeIndex: 1314 entries, 0 to 1313
+    # Data columns (total 7 columns):
+    #  #   Column      Non-Null Count  Dtype  
+    # ---  ------      --------------  -----  
+    #  0   Unnamed: 0  1314 non-null   int64  
+    #  1   sample_ID   1314 non-null   object 
+    #  2   treatment   1314 non-null   object 
+    #  3   group       1314 non-null   int64  
+    #  4   time        1314 non-null   object 
+    #  5   metric      1314 non-null   object 
+    #  6   value       1314 non-null   float64
+    # dtypes: float64(1), int64(2), object(4)
+    # memory usage: 72.0+ KB
+
+# %%
+
+# useless
+
+df_serum_chem_6.describe()
+    # Out[11]: 
+    #         Unnamed: 0        group        value
+    # count  1314.000000  1314.000000  1314.000000
+    # mean    656.500000     1.027397   148.518950
+    # std     379.463437     0.791719   253.574677
+    # min       0.000000     0.000000     0.000000
+    # 25%     328.250000     0.000000     5.700000
+    # 50%     656.500000     1.000000    13.770000
+    # 75%     984.750000     2.000000   140.000000
+    # max    1313.000000     2.000000  2031.000000
+
+# %%
+
+# useless
+
+df_serum_chem_6.describe(include='all')
+    # Out[13]: 
+    #          Unnamed: 0 sample_ID treatment  ...          time      metric        value
+    # count   1314.000000      1314      1314  ...          1314        1314  1314.000000
+    # unique          NaN        20         3  ...             8           9          NaN
+    # top             NaN      ZC14   DBD-HTK  ...  Explantation  Urea_serum          NaN
+    # freq            NaN        72       490  ...           179         147          NaN
+    # mean     656.500000       NaN       NaN  ...           NaN         NaN   148.518950
+    # std      379.463437       NaN       NaN  ...           NaN         NaN   253.574677
+    # min        0.000000       NaN       NaN  ...           NaN         NaN     0.000000
+    # 25%      328.250000       NaN       NaN  ...           NaN         NaN     5.700000
+    # 50%      656.500000       NaN       NaN  ...           NaN         NaN    13.770000
+    # 75%      984.750000       NaN       NaN  ...           NaN         NaN   140.000000
+    # max     1313.000000       NaN       NaN  ...           NaN         NaN  2031.000000
+    
+    # [11 rows x 7 columns]
+
+# %%
+
 
 
 
 # %%
-
 
 
