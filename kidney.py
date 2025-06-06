@@ -7,9 +7,18 @@ from openpyxl.utils import column_index_from_string
 
 # %%
 
-overview = pd.read_excel( r'U:\kidney\overview_2.xlsx' , header=[0,1] )
+# the non-standard 'ZC6' entry was renamed to 'ZC06'
+overview_3 = pd.read_excel(  r'U:\kidney\overview_3.xlsx' , header=[0,1] , index_col=0 )
 
-overview_2 = pd.read_excel( r'U:\kidney\overview_2.xlsx' , header=[0,1] )
+# the non-standard 'ZC6' entry was renamed to 'ZC06' via Excel itself.
+overview_2 = pd.read_excel( r'U:\kidney\overview_2.xlsx' , header=[0,1] , index_col=0 )
+
+
+# the long ( tidy ) format.
+# non-standard entries ('-') & NA values exist.
+# no filtering base on treatmnet group , time or sample_ID .
+# no baseline correction
+df_serum_chem_4 = pd.read_csv( r'U:\kidney\df_serum_chem_4.csv' , index_col=0 )
 
 
 # %%
@@ -93,6 +102,7 @@ df_serum_chem = overview.iloc[:, cols_to_keep]
 df_serum_chem.shape
     # Out[25]: (82, 102)
 
+# column is hierarchical.
 df_serum_chem.iloc[:4 , :6]
     # Out[15]: 
     #           Sample ID:          Treatment             Group:        TI  \
@@ -121,6 +131,7 @@ df_serum_chem.iloc[:4 , -3:]
 
 # %%
 
+# column is hierarchical.
 df_serum_chem.iloc[:4 , :3].columns
     # Out[18]: 
     # MultiIndex([('Sample ID:', 'Unnamed: 0_level_1'),
@@ -136,6 +147,10 @@ df_serum_chem.iloc[:4 , -3:].columns
     #            )
 
 # %%
+
+# .stack method does not have the parameter : id_vars : as in .melt.
+    # hence this is the trick to freeze the id columns.
+# why not using .melt : it does not support multi-index.
 
 df_serum_chem_2 = df_serum_chem.set_index([ 
                 ('Sample ID:', 'Unnamed: 0_level_1'),
@@ -267,15 +282,50 @@ df_serum_chem_4[:3]
 
 # %%
 
-df_serum_chem_4.to_csv( r'U:\kidney\df_serum_chem.csv' )
+# this is done here, becasue : overview_3.xlsx : file was changed afterwards.
+df_serum_chem_4.iloc[ : , 0 ].replace( to_replace='ZC6' , value='ZC06' , inplace=True )
+
 
 # %%
 
+df_serum_chem_4.to_csv( r'U:\kidney\df_serum_chem_4.csv' )
+
+# %%
+
+df_serum_chem_4['treatment'].unique()
+    # Out[46]: 
+    # array(['DBD-HTK', 'DBD-Ecosol', '-', 'DCD-HTK', 'DCD-Ecoflow', 'TBB',
+    #        'DBD-Ecoflow', 'DCD-Ecosol', 'NMP', nan], dtype=object)
+
+df_serum_chem_4['time'].unique()
+    # Out[48]: 
+    # array(['TI', 'Explantation', 'Implantation_Z1', 'Implantation_Z3',
+    #        'POD_1', 'POD_2', 'POD_3', 'POD_4', 'POD_5', 'POD_6', 'POD_7'],
+    #       dtype=object)
+
+df_serum_chem_4['metric'].unique()
+    # Out[52]: 
+    # array(['LDH_serum', 'Total_protein_serum', 'Urea_serum',
+    #        'Creatinin_serum', 'Uric_acid_serum', 'Na_serum', 'Ka_serum',
+    #        'CRP_serum', 'Cl_serum'], dtype=object)
+
+
+df_serum_chem_4['sample_ID'].unique()
+# Out[112]: 
+# array(['ZC04', 'ZC05', 'ZC06', 'ZC07', 'ZC08', 'ZC09', 'ZC10', 'ZC11',
+#        'ZC13', 'ZC14', 'ZC15', 'ZC16', 'ZC17', 'ZC18', 'ZC19', 'ZC20',
+#        'ZC21', 'ZC22', 'ZC23', 'ZC24', 'ZC25', 'ZC26', 'ZC27', 'ZC28',
+#        'ZC29', 'ZC30', 'ZC31', 'ZC32', 'ZC33', 'ZC34', 'ZC35', 'ZC36',
+#        'ZC37', 'ZC38', 'ZC39', 'ZC40', 'ZC41', 'ZC42', 'ZC43', 'ZC44',
+#        'ZC45', 'ZC46', 'ZC47', 'ZC48', 'ZC49', 'ZC50', 'ZC51', 'ZC52',
+#        'ZC53', 'ZC54', 'ZC55', 'ZC56', 'ZC57', 'ZC58', 'ZC59', 'ZC60',
+#        'ZC61', 'ZC62', 'ZC63', 'ZC64', 'ZC65', 'ZC66', 'ZC67', 'ZC68',
+#        'ZC69', nan], dtype=object)
 
 # %%
 # %%
 
-
+# explore
 
 excel_col_number = column_index_from_string("EN")  # returns 144
 # Use .iloc to select by position. This returns columns 0 to 143.
@@ -302,11 +352,53 @@ overview.iloc[ :4 , 41 ]
 
 # %%
 
-
+# it's just when you read the same 'overview' file with : header=[0,1]  !!
 overview_2 = pd.read_excel( r'U:\kidney\overview.xlsx' , header=[0,1] )
 
 overview_2.shape
     # Out[16]: (82, 916)
+
+overview_2.iloc[:4,:4]
+    # Out[93]: 
+    #           Sample ID:          Treatment             Group:         BW Eingang
+    #   Unnamed: 0_level_1 Unnamed: 1_level_1 Unnamed: 2_level_1 Unnamed: 3_level_1
+    # 0               ZC04            DBD-HTK                  1          25.600000
+    # 1               ZC05         DBD-Ecosol                  2          20.200000
+    # 2               ZC06            DBD-HTK                  1                 21
+    # 3               ZC07         DBD-Ecosol                  2          18.700000
+
+
+overview_2.iloc[ :4 , 0 ]
+    # Out[96]: 
+    # 0    ZC04
+    # 1    ZC05
+    # 2    ZC06
+    # 3    ZC07
+    # Name: (Sample ID:, Unnamed: 0_level_1), dtype: object
+
+
+overview_2.iloc[ : , 0 ].unique()
+    # Out[97]: 
+    # array(['ZC04', 'ZC05', 'ZC06', 'ZC07', 'ZC08', 'ZC09', 'ZC10', 'ZC11',
+    #        'ZC6', 'ZC13', 'ZC14', 'ZC15', 'ZC16', 'ZC17', 'ZC18', 'ZC19',
+    #        'ZC20', 'ZC21', 'ZC22', 'ZC23', 'ZC24', 'ZC25', 'ZC26', 'ZC27',
+    #        'ZC28', 'ZC29', 'ZC30', 'ZC31', 'ZC32', 'ZC33', 'ZC34', 'ZC35',
+    #        'ZC36', 'ZC37', 'ZC38', 'ZC39', 'ZC40', 'ZC41', 'ZC42', 'ZC43',
+    #        'ZC44', 'ZC45', 'ZC46', 'ZC47', 'ZC48', 'ZC49', 'ZC50', 'ZC51',
+    #        'ZC52', 'ZC53', 'ZC54', 'ZC55', 'ZC56', 'ZC57', 'ZC58', 'ZC59',
+    #        'ZC60', 'ZC61', 'ZC62', 'ZC63', 'ZC64', 'ZC65', 'ZC66', 'ZC67',
+    #        'ZC68', 'ZC69', nan], dtype=object)
+
+
+# the non-standard 'ZC6' entry is renamed to 'ZC06'.
+overview_2.iloc[ : , 0 ].replace( to_replace='ZC6' , value='ZC06' , inplace=True )
+
+overview_2.to_excel(  r'U:\kidney\overview_3.xlsx' , engine='xlsxwriter' )
+
+
+# %%
+
+
 
 overview_2.iloc[ :4 , 40:44 ]
     # Out[17]: 
@@ -347,8 +439,88 @@ overview_2.iloc[ :4 , 44:48 ].columns
 
 # %%
 
-    
+overview_2.columns
+    # Out[8]: 
+    # MultiIndex([(                             'Sample ID:', 'Unnamed: 0_level_1'),
+    #             (                              'Treatment', 'Unnamed: 1_level_1'),
+    #             (                                 'Group:', 'Unnamed: 2_level_1'),
+    #             (                             'BW Eingang', 'Unnamed: 3_level_1'),
+    #             (                                'Ear tag', 'Unnamed: 4_level_1'),
+    #             (                     'Operation date Ti:', 'Unnamed: 5_level_1'),
+    #             (          'Operation TI incisicion time:', 'Unnamed: 6_level_1'),
+    #             ('Operation TI end time (wound closure): ', 'Unnamed: 7_level_1'),
+    #             (                            'Duration TI', 'Unnamed: 8_level_1'),
+    #             (                            'BW in kg TI', 'Unnamed: 9_level_1'),
+    #             ...
+    #             (                         'Temperaturchip',             'POD4.1'),
+    #             (                         'Temperaturchip',             'POD4.2'),
+    #             (                         'Temperaturchip',               'POD5'),
+    #             (                         'Temperaturchip',             'POD5.1'),
+    #             (                         'Temperaturchip',             'POD5.2'),
+    #             (                         'Temperaturchip',               'POD6'),
+    #             (                         'Temperaturchip',             'POD6.1'),
+    #             (                         'Temperaturchip',             'POD6.2'),
+    #             (                         'Temperaturchip',               'POD7'),
+    #             (                         'Temperaturchip',             'POD7.1')],
+    #            length=916)
+
+# %%
+
+overview_2.columns[:44]
+    # Out[13]: 
+    # MultiIndex([(                             'Sample ID:',  'Unnamed: 0_level_1'),
+    #             (                              'Treatment',  'Unnamed: 1_level_1'),
+    #             (                                 'Group:',  'Unnamed: 2_level_1'),
+    #             (                             'BW Eingang',  'Unnamed: 3_level_1'),
+    #             (                                'Ear tag',  'Unnamed: 4_level_1'),
+    #             (                     'Operation date Ti:',  'Unnamed: 5_level_1'),
+    #             (          'Operation TI incisicion time:',  'Unnamed: 6_level_1'),
+    #             ('Operation TI end time (wound closure): ',  'Unnamed: 7_level_1'),
+    #             (                            'Duration TI',  'Unnamed: 8_level_1'),
+    #             (                            'BW in kg TI',  'Unnamed: 9_level_1'),
+    #             (                         'transponder ID', 'Unnamed: 10_level_1'),
+    #             (                            'Surgeon NTx', 'Unnamed: 11_level_1'),
+    #             (                  'Operation date Expl.:', 'Unnamed: 12_level_1'),
+    #             (      'Operation Expl.  incisicion time:', 'Unnamed: 13_level_1'),
+    #             (  'Operation Expl.  End (wound closure):', 'Unnamed: 14_level_1'),
+    #             (                    'OP Expl. time [min]', 'Unnamed: 15_level_1'),
+    #             (                'Cold Storage start time', 'Unnamed: 16_level_1'),
+    #             (                  'Cold storage End time', 'Unnamed: 17_level_1'),
+    #             (                      'Cold storage time', 'Unnamed: 18_level_1'),
+    #             (                            'BW in kg Ex', 'Unnamed: 19_level_1'),
+    #             (                  'Operation date Impl.:', 'Unnamed: 20_level_1'),
+    #             (             'Operation incisision time:', 'Unnamed: 21_level_1'),
+    #             (         'Operation end (wound closure):', 'Unnamed: 22_level_1'),
+    #             (                          'OP time [min]', 'Unnamed: 23_level_1'),
+    #             (                        'Blood loss (ml)', 'Unnamed: 24_level_1'),
+    #             (                 'Anastomosis start time', 'Unnamed: 25_level_1'),
+    #             (                   'Anastomosis end time', 'Unnamed: 26_level_1'),
+    #             (                   'Anastomosis duration', 'Unnamed: 27_level_1'),
+    #             (         'Impl. End of cold storage time', 'Unnamed: 28_level_1'),
+    #             (        'Impl. Start of reperfusion time', 'Unnamed: 29_level_1'),
+    #             (                     'warm ischemia time', 'Unnamed: 30_level_1'),
+    #             (         'Control kidney sample in -80°C', 'Unnamed: 31_level_1'),
+    #             (                           'BW in kg Imp', 'Unnamed: 32_level_1'),
+    #             (   'Weight Kidney after Explantation [g]', 'Unnamed: 33_level_1'),
+    #             (       'Weight Kidney after Flushing [g]', 'Unnamed: 34_level_1'),
+    #             (        'Weight Kidney after storage [g]', 'Unnamed: 35_level_1'),
+    #             (      'Weight Kidney after sacrifice [g]', 'Unnamed: 36_level_1'),
+    #             (                         'Sacrifice date', 'Unnamed: 37_level_1'),
+    #             (                            'BW in kg F:', 'Unnamed: 38_level_1'),
+    #             (                          'Survival days', 'Unnamed: 39_level_1'),
+    #             (                      'Surgeon sacrifice', 'Unnamed: 40_level_1'),
+    #             (         'Kidney samples after sacrifice',           'Histology'),
+    #             (         'Spleen samples after sacrifice',           'Histology'),
+    #             (      'Lymphnode samples after sacrifice',           'Histology')],
+    #            )
+
+# %%    
+
 print(list(overview_2.columns))
+
+# %%
+# %%
+
 
 # %%
 
