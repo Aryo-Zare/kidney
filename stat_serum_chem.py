@@ -8,6 +8,7 @@
 # %%
 
 import os
+
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
@@ -20,11 +21,11 @@ import matplotlib.pyplot as plt
 # %%
 
 # so that you would not search inside the program i you want to change the main data.
-data_main = df_serum_chem_6_od_or
+data_main = df_serum_chem_6_od_or_yjt
 
 # Set the outcome variable here:
 # Choose between "value" or "value_bc".
-outcome_variable = "value_bc"   
+outcome_variable = "value_bc_yjt"   
 
 # Define the folder for saving Q-Q plots
 qq_plot_folder = r"U:\kidney\plot\q_q"
@@ -100,7 +101,8 @@ results_all = []
 
 # Loop over each unique metric in your main data.
 for met in data_main['metric'].unique():
-    df_met = data_main[ data_main["metric"] == met].copy().reset_index()
+    # reset_index : otherwise the mixeld-effects-model does not function on an interrupted index following slicing.
+    df_met = data_main[ data_main["metric"] == met].copy().reset_index( drop=True )
     
     # Optionally, check for a minimum number of rows or unique subjects.
     # if df_met.shape[0] < 10 or df_met["sample_ID"].nunique() < 5:
@@ -120,8 +122,16 @@ for met in data_main['metric'].unique():
     # Generate and save the Q-Q plot for model residuals.
     # for each metric, there is one residuals data  =>  1 q-q plot.
     fig = sm.qqplot(result_metric.resid, line='45')
+    # Set the overall figure size to 8 x 8 inches
+    fig.set_size_inches(8, 8)
+    # Get the first (and typically only) axes object from the figure
+    ax = fig.axes[0]
+    # Set aspect ratio to 'equal' so that one unit on the x-axis
+    # is equal in length to one unit on the y-axis.
+    ax.set_aspect('equal', adjustable='box')
     plt.title(f"Q-Q Plot for {met}")
     plot_filename = os.path.join(qq_plot_folder, f"qqplot_{met}.pdf")
+    plt.tight_layout()
     plt.savefig(plot_filename)
     plt.close()
 
@@ -210,8 +220,8 @@ final_results_df.shape
 
 # %%
 
-final_results_df.to_csv( r'U:\kidney\result\result_df_serum_chem_6_od_or__bc.csv' , index=False)
-final_results_df.to_excel( r'U:\kidney\result\result_df_serum_chem_6_od_or__bc.xlsx' , index=False)
+final_results_df.to_csv( r'U:\kidney\result\result_df_serum_chem_6_od_or_bc_yjt.csv' , index=False)
+final_results_df.to_excel( r'U:\kidney\result\result_df_serum_chem_6_od_or_bc_yjt.xlsx' , index=False)
 
 # %%
 # %%
