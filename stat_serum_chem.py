@@ -230,7 +230,6 @@ final_results_df.to_excel( r'U:\kidney\result\result_df_serum_chem_6_od_or_bc_yj
     # u:\kidney\stat_serum_chem.py:435: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value '[False False False]' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
     #   df_metric_results.loc[idx, 'reject_null_per_tp'] = reject_tp
 
-
 # %%
 
 # capitalization error :
@@ -253,7 +252,6 @@ final_results_df.to_excel( r'U:\kidney\result\result_df_serum_chem_6_od_or_bc_yj
             Model did not converge for metric LDH_serum: index 137 is out of bounds for axis 0 with size 137
 
 '''
-
 
 # %%
 
