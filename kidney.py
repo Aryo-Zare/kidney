@@ -7,12 +7,12 @@ from openpyxl.utils import column_index_from_string
 
 # %%
 
-# the non-standard 'ZC6' entry was renamed to 'ZC06'
-overview_3 = pd.read_excel(  r'U:\kidney\overview_3.xlsx' , header=[0,1] , index_col=0 )
-
 # the non-standard 'ZC6' entry was renamed to 'ZC06' via Excel itself.
 overview_2 = pd.read_excel( r'U:\kidney\overview_2.xlsx' , header=[0,1] , index_col=0 )
 
+
+# the non-standard 'ZC6' entry was renamed to 'ZC06'
+overview_3 = pd.read_excel(  r'U:\kidney\overview_3.xlsx' , header=[0,1] , index_col=0 )
 
 # the long ( tidy ) format.
 # non-standard entries ('-') & NA values exist.
@@ -86,13 +86,14 @@ column_index_from_string("EN")
 # %%
 
 # for later slicing.
+# indices for the serum chemistry analytes.
 begin = column_index_from_string("AT") - 1
 end = column_index_from_string("EN")
 
 # %%
 
 # Option 2: Using numpy's r_ to slice and concatenate the indices:
-cols_to_keep = np.r_[0:3, begin:end]  # np.r_ concatenates slices and arrays
+cols_to_keep = np.r_[ 0:3 , begin:end ]  # np.r_ concatenates slices and arrays
 
 cols_to_keep[-2:]
     # Out[12]: array([142, 143])

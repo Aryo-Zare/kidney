@@ -208,9 +208,9 @@ new_titles = [
     'LDH',
     'Total protein',
     'CRP',
-    'Na',
-    'K',
-    'Cl'
+    'Na+',
+    'K+',
+    'Cl-'
 ]
 
 for ax , i in zip( g.axes.flat , new_titles ):
@@ -238,9 +238,11 @@ for ax , i in zip( g.axes.flat , unit ) :
 
 # %%
 
+# x= : the x location of the text in figure coordinates.
 plt.suptitle( 'Serum values for various metabolites & electrolytes across time '   # Change from baseline of
              '\n in different treatment conditions'
              '\n ( after outlier removal )'    # outlier removal_   after baseline correction _ baseline as explantation time
+             , x=0.4 
              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
 
@@ -249,6 +251,7 @@ plt.suptitle( 'Serum values for various metabolites & electrolytes across time '
 plt.suptitle( 'Change from baseline of serum values for various metabolites & electrolytes across time '   # Change from baseline of
              '\n in different treatment conditions'
              '\n ( after outlier removal _ baseline as Explantation time )'    # outlier removal_   after baseline correction _ baseline as explantation time
+             , x=0.4 
              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
 

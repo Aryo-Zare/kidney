@@ -22,6 +22,11 @@
 
 '''
 
+# %%
+
+# this was extracted in kidney.py
+df_serum_chem_4 = pd.read_csv( r'U:\kidney\df_serum_chem_4.csv' , index_col=0 )
+
 # %%'
 # %%'
 
@@ -298,46 +303,16 @@ df_serum_chem_6_od = pd.read_pickle( r'U:\kidney\df_serum_chem_6_od.pkl' )
 # See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
 #   df_serum_chem_6['time'] = pd.Categorical(
 
-# %%' outlier removal 
-
-# outlier removal.
-# I put no positional arguments to be able to order the parameters as wished.
-# this is based on removal of outliers after visual instpection : hence, using <>.
-
-def remove_outliers(
-                    df=None , 
-                    metric=None , 
-                    case=False ,  # case-sensetivity for the metric name.
-                    operator="<", 
-                    threshold=None
-):
-    
-    """
-    Remove rows for which df['metric'] contains metric_keyword and the value is below (or above) a threshold.
-    operator: '<' removes if value < threshold, while '>' would remove if value > threshold.
-    """
-    # optional : 
-    # Check that required parameters were provided
-    # this is because there are no positiona ( required ) argumnents in the 1st line of function definition.
-    # if df is None or metric_keyword is None or threshold is None:
-    #     raise ValueError("df, metric_keyword, and threshold must be provided")
-
-    if operator == "<":
-        mask = (df['metric'].str.contains(metric, case=case)) & (df['value'] < threshold)
-    elif operator == ">":
-        mask = (df['metric'].str.contains(metric, case=case)) & (df['value'] > threshold)
-    else:
-        raise ValueError("Unsupported operator. Use '<' or '>'")
-    
-    return df.loc[~mask]
-
 # %%'
 
-# Apply the function for each metric:
+# plot : detect outliers.
+
+# %%
+
+# remove outliers
 
 # or : outliers removed !
 df_serum_chem_6_od_or = df_serum_chem_6_od.copy()
-
 
 df_serum_chem_6_od_or = remove_outliers( df=df_serum_chem_6_od_or , metric="Total_protein_serum" , case=False , operator="<" , threshold=2 )
 df_serum_chem_6_od_or = remove_outliers( df=df_serum_chem_6_od_or , metric="Cl_serum" , case=False , operator="<" , threshold=50 )
@@ -374,50 +349,22 @@ df_serum_chem_6_od_or['treatment'].unique()
 
 # checking for negative or 0 values before log-transformation.
 
-df_serum_chem_6_od_or['value'].min()
-    # Out[12]: 0.0
+    # df_serum_chem_6_od_or['value'].min()
+        # Out[12]: 0.0
+    
+    # df_serum_chem_6_od_or.sort_values(by=['value'])[[ 'metric' , 'treatment' , 'time' , 'value']][:4]
+        # Out[17]: 
+        #           metric   treatment          time    value
+        # 4683   CRP_serum         NMP  Explantation 0.000000
+        # 718   Urea_serum  DBD-Ecosol  Explantation 0.820000
+        # 5187  Urea_serum         NMP  Explantation 0.980000
+        # 795    CRP_serum  DBD-Ecosol         POD_6 1.000000
 
-df_serum_chem_6_od_or.sort_values(by=['value'])[[ 'metric' , 'treatment' , 'time' , 'value']][:4]
-    # Out[17]: 
-    #           metric   treatment          time    value
-    # 4683   CRP_serum         NMP  Explantation 0.000000
-    # 718   Urea_serum  DBD-Ecosol  Explantation 0.820000
-    # 5187  Urea_serum         NMP  Explantation 0.980000
-    # 795    CRP_serum  DBD-Ecosol         POD_6 1.000000
-
-
-# %%'
-
-from sklearn.preprocessing import PowerTransformer
 
 # %%'
 
-# yjt : add a new column to the dataframe based on Yeo_Johnson transformation of an existing column.
-# source_column : the column to be transformed
-# new_column : the trasformations shall be writen in this new column : 
-    # ]give it a name.
-    # or if not : it will autmatically be named by the convention below.
+# Yeo_Johnson transform
 
-def yjt( df=None , source_column=None , new_column=None ):
-    """
-    Applies the Yeo-Johnson transformation to the given column and adds it to the dataframe.
-    If new_column is not provided, it appends '_yjt' to the original column name.
-    """
-    if new_column is None :  # if the user did not define the new column's name.
-        new_column = source_column + '_yjt'
-        
-    # standardize=False : output : log‐like but not centered at zero or unit variance
-        # easier interpretation of results ?
-    pt = PowerTransformer(method='yeo-johnson', standardize=False)
-    # Transform the source_column (reshaped as a 2D array [ dataframe, in contrast to a series ][ by double brackets ] )
-    transformed = pt.fit_transform(df[[source_column]])
-    # .flatten : convert the dataframe back to a series.
-    df[new_column] = transformed.flatten() 
-    return df
-
-# %%'
-
-# Example usage:
 df_serum_chem_6_od_or = yjt( df=df_serum_chem_6_od_or , source_column='value' )
 
 df_serum_chem_6_od_or = yjt( df=df_serum_chem_6_od_or , source_column='value_bc' )
@@ -443,10 +390,11 @@ df_serum_chem_6_od_or[:4]
 
 df_serum_chem_6_od_or.to_pickle( r'U:\kidney\df_serum_chem_6_od_or_yjt.pkl' )
 
-df_serum_chem_6_od_or_yjt = df_serum_chem_6_od_or.copy()
+df_serum_chem_6_od_or_yjt = pd.read_pickle( r'U:\kidney\df_serum_chem_6_od_or_yjt.pkl' )
+
+# df_serum_chem_6_od_or_yjt = df_serum_chem_6_od_or.copy()
 
 
 # %%
 
-# test
 

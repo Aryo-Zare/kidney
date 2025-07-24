@@ -1,5 +1,13 @@
 
+multiplex_11 = pd.read_pickle( r'U:\kidney\histology\multiplex\multiplex_11.pkl' )
 
+multiplex_11[:4]
+    # Out[90]: 
+    #    sample_ID   treatment biomarker      cnp
+    # 8       ZC05  DBD-Ecosol  HMGB1+_% 0.529383
+    # 9       ZC07  DBD-Ecosol  HMGB1+_% 0.165114
+    # 10      ZC09  DBD-Ecosol  HMGB1+_% 0.227194
+    # 11      ZC11  DBD-Ecosol  HMGB1+_% 0.062555
 
 # %%'
 
@@ -40,9 +48,10 @@ g = sns.catplot(
                 jitter=True , #  You can specify the amount of jitter (half the width of the uniform random variable support), 
                                     # or use True for a good default.
                 sharex=True, 
-                sharey=False,
+                sharey=False, # despite the unit of all y axes being 'cell count(%)', the y axis can not be shared.
+                                    # because the nature of the parameters are different !
                 height=6, 
-                aspect=.6,
+                aspect=0.6,
 )
 
 
@@ -59,7 +68,7 @@ g = sns.catplot(
         # FutureWarning: Use "auto" to set automatic grayscale colors. From v0.14.0, "gray" will default to matplotlib's definition.
     #   g = sns.catplot(
 
-# %%'
+# %% box
 
 g = sns.catplot(
                 data=multiplex_11 , 
@@ -78,7 +87,7 @@ g = sns.catplot(
                 aspect=.6,
 )
 
-# %% point
+# %% point _ separate
 
 g = sns.catplot(
                 data=multiplex_11 , 
@@ -115,15 +124,15 @@ g.map_dataframe(
                 sns.pointplot ,
                 data=multiplex_11 , 
                 hue="treatment", 
-                legend='full' ,   # may not be neeed !
+                legend='full' ,   # may not be needed !
                 y="cnp", 
-                linestyle="none" ,
+                linestyle="none" ,  # this cancels connecting the points ! ( does it have any value here ? no : the organization of hue is different here )
                 palette=custom_palette ,
                 
                 marker="_", 
                 markersize=20, 
                 markeredgewidth=5,
-                errorbar=None,
+                errorbar='sd',
                 
                 dodge=0.5 , # the exact value was defined by trial & error.
                     # if you don't define it, the strip plot & point-plot will separate each hue level differently.
@@ -135,21 +144,30 @@ g.map_dataframe(
 # %%'
 # %%'
 
-# Method 1: reset both x and y in one call
-    # the first item is the x axis label.
-g.set_axis_labels( "", "cell count(%)" )
-
-# Method 2: if you only want to touch the y-label
-    # g.set(ylabel="cell number")
-
-
-# If you ever need to customize each subplot individually, you can also loop over the axes:
-    # for ax in g.axes.flatten():
-    #     ax.set_ylabel("cell number")
-
-
 # drop all x-ticks (positions & labels)
 g.set(xticks=[])
+
+# x axes do nbot have any labels !
+
+# %% y-axis label
+
+# put the y-label of the left side subplots.
+        # by using a loop over axes, all axes will get the y axis label : not what you want.
+
+
+axes = g.axes.flatten()
+
+# explore
+    # axes
+        # Out[72]: 
+        # array([<Axes: title={'center': 'biomarker = HMGB1+_%'}>,
+        #        <Axes: title={'center': 'biomarker = NGAL+_%'}>,
+        #        <Axes: title={'center': 'biomarker = Casp3+_%'}, ylabel='cell number'>,
+        #        <Axes: title={'center': 'biomarker = Zo-1+_%'}>,
+        #        <Axes: title={'center': 'biomarker = Syndecan+_%'}>], dtype=object)
+
+axes[0].set_ylabel("cell count(%)", loc="top" , rotation=90 )
+axes[3].set_ylabel("cell count(%)", loc="top" , rotation=90 )
 
 # %%'
 
@@ -179,8 +197,8 @@ plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 # %%'
 # %%'
 
-plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_3.pdf' )
-plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_3.svg' )
+plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.pdf' )
+plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.svg' )
 
 
 plt.savefig( r'U:\kidney\histology\multiplex\plot\box_4.pdf' )
