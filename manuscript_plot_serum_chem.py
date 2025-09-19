@@ -1,7 +1,7 @@
 
 # %%'
 
-df_serum_chem_6_od_or_yjt = pd.read_pickle( r'U:\kidney\df_serum_chem_6_od_or_yjt.pkl' )
+df_serum_chem_6_od_or_yjt = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\df_serum_chem_6_od_or_yjt.pkl' )
 
 # %%'
 
@@ -78,7 +78,7 @@ g.map_dataframe(
                     dodge=0.2 ,  #  TRUE
                     marker="o" ,  
                     estimator='mean' ,    
-                    errorbar='sd' 
+                    errorbar='se' 
 ) 
 
 '''
@@ -171,13 +171,6 @@ plt.suptitle( 'Serum values across time' , x=0.4 , fontsize=24 )
 
 # %%'
 
-plt.suptitle( 'Change from baseline of serum values across time,' 
-             '\n Explantation time as baseline'
-             , x=0.4 , fontsize=24 )
-
-
-# %%'
-
 # rect : to avoid overlapping of the legend on the figure.
 plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
@@ -191,8 +184,9 @@ plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'U:\kidney\plot\manuscript\serum_values_2.pdf' )   # serum_values
-plt.savefig( r'U:\kidney\plot\manuscript\serum_values_2.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_3.pdf' )   # serum_values
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_3.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_3.eps' )
 
 # %%'
 

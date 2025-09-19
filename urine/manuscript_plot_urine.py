@@ -1,5 +1,8 @@
 
-df_urine_8 = pd.read_pickle( r'U:\kidney\BG\df_urine_8.pkl' )
+# strangely, this data is stored in BG folder !!
+df_urine_8 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_urine_8.pkl' )
+
+# df_urine_8 = pd.read_pickle( r'U:\kidney\BG\df_urine_8.pkl' )
 
 # %%
 
@@ -44,11 +47,11 @@ custom_palette = {
 g = sns.FacetGrid( 
                     df_urine_8_2 , 
                     col="metric",  # columns : subplots.
-                    col_wrap=3, 
+                    col_wrap=1, 
                     sharex=False , 
                     sharey=False , 
                     height=6, 
-                    aspect=1.2 
+                    aspect=1.8 
 )
 
 # %%
@@ -63,7 +66,7 @@ g.map_dataframe(
                     palette=custom_palette ,
                     marker="o" ,  
                     estimator='mean' ,    
-                    errorbar='sd' ,
+                    errorbar='se' ,
                     dodge=0.2
 ) 
 
@@ -122,22 +125,14 @@ plt.suptitle( 'Urinalysis'   # Change from baseline of
 
 # %%
 
-plt.suptitle( 'Urinalysis : change from baseline across time '   # Change from baseline of
-             # '\n in different treatment conditions'
-             '\n ( after outlier removal , baseline as explantation time )'    # outlier removal_   after baseline correction _ baseline as explantation time
-             , x=0.4 
-             , fontsize=24 )
-#  \n mean_sd   #  for pointplot
-
-# %%
-
 # rect : to avoid overlapping of the legend on the figure.
-plt.tight_layout( rect=[0, 0, 0.87 , 1] )
+plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 
 # %%
 
-plt.savefig( r'U:\kidney\urine\plot\manuscript_urinalysis_value_2.pdf' )
-plt.savefig( r'U:\kidney\urine\plot\manuscript_urinalysis_value_2.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_3.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_3.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_3.eps' )
 
 # %%
 

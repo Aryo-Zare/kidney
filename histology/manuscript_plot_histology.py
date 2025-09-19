@@ -1,5 +1,5 @@
 
-df_hist_7 = pd.read_pickle( r'U:\kidney\histology\df_hist_7.pkl' )
+df_hist_7 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_7.pkl' )
 
 df_hist_7[:4]
     # Out[91]: 
@@ -84,7 +84,7 @@ g.map_dataframe(
                 marker="_", 
                 markersize=20, 
                 markeredgewidth=5,
-                errorbar='sd',
+                errorbar='se',
                 
                 dodge=0.5 , # the exact value was defined by trial & error.
                     # if you don't define it, the strip plot & point-plot will separate each hue level differently.
@@ -95,24 +95,24 @@ g.map_dataframe(
 
 # %%
 
-# g
-g.map_dataframe(
-                    sns.boxplot ,
+# # g
+# g.map_dataframe(
+#                     sns.boxplot ,
                     
-                    x='cat' , 
-                    y='value' ,   # 'value' or 'value_bc'
+#                     x='cat' , 
+#                     y='value' ,   # 'value' or 'value_bc'
                     
-                    # notch=True, 
-                    # boxprops={"facecolor": (.3, .5, .7, .5)},
-                    medianprops={"color": "black", "linewidth": 2},
+#                     # notch=True, 
+#                     # boxprops={"facecolor": (.3, .5, .7, .5)},
+#                     medianprops={"color": "black", "linewidth": 2},
                     
-                    whis=1.5 ,
-                    flierprops={"marker": "x" , 'markersize': 10 }
-)
+#                     whis=1.5 ,
+#                     flierprops={"marker": "x" , 'markersize': 10 }
+# )
 
 
-# whis : If scalar, whiskers are drawn to the farthest datapoint within whis * IQR from the nearest hinge.
-# dictionaries for customization : https://matplotlib.org/stable/gallery/statistics/boxplot.html#sphx-glr-gallery-statistics-boxplot-py
+# # whis : If scalar, whiskers are drawn to the farthest datapoint within whis * IQR from the nearest hinge.
+# # dictionaries for customization : https://matplotlib.org/stable/gallery/statistics/boxplot.html#sphx-glr-gallery-statistics-boxplot-py
 
 # %%
 
@@ -198,9 +198,9 @@ plt.tight_layout( rect=[0, 0, 0.77 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'U:\kidney\histology\plot\strip_point.pdf' )
-plt.savefig( r'U:\kidney\histology\plot\strip_point.svg' )
-
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript.eps' )
 
 # %%
 # %%

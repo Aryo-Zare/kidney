@@ -1,7 +1,7 @@
 
 # %%
 
-df_bg_8 = pd.read_pickle( r'U:\kidney\BG\df_bg_8.pkl' )
+df_bg_8 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_bg_8.pkl' )
 
 # %%
 
@@ -66,7 +66,7 @@ g.map_dataframe(
                     palette=custom_palette ,
                     marker="o" ,  
                     estimator='mean' ,    
-                    errorbar='sd' ,
+                    errorbar='se' ,
                     dodge= 0.2
 ) 
 
@@ -151,13 +151,6 @@ plt.suptitle( 'Blood gass measurements across time' , x=0.4 , fontsize=24 )
 
 # %%
 
-plt.suptitle( 'Change from baseline of blood gass measurements,' 
-             '\n Explantation time as baseline'
-             , x=0.4 , fontsize=24 )
-
-
-# %%
-
 # rect : to avoid overlapping of the legend on the figure.
 plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
@@ -165,8 +158,9 @@ plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'U:\kidney\BG\plot\manuscript_bg_values_2.pdf' )
-plt.savefig( r'U:\kidney\BG\plot\manuscript_bg_values_2.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\plot\manuscript_bg_values_3.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\plot\manuscript_bg_values_3.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\plot\manuscript_bg_values_3.eps' )
 
 # %%
 

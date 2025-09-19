@@ -1,5 +1,5 @@
 
-multiplex_11 = pd.read_pickle( r'U:\kidney\histology\multiplex\multiplex_11.pkl' )
+multiplex_11 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_11.pkl' )
 
 multiplex_11[:4]
     # Out[90]: 
@@ -32,13 +32,13 @@ custom_palette = {
                         # yet, there will be no legend at the side of the plot.
 
 g = sns.catplot(
+                kind="strip",             
                 data=multiplex_11 , 
                 hue="treatment", 
-                legend='full' ,   # may not be neeed !
+                legend='full' ,   # may not be needed !
                 y="cnp", 
                 col="biomarker",
                 col_wrap=3 ,
-                kind="strip", 
                 size = 9 ,   
                 linewidth=1 ,
                 edgecolor='gray' ,
@@ -70,48 +70,48 @@ g = sns.catplot(
 
 # %% box
 
-g = sns.catplot(
-                data=multiplex_11 , 
-                hue="treatment", 
-                y="cnp", 
-                col="biomarker",
-                col_wrap=3 ,
-                kind="box", 
-                whis=1.5 ,
-                flierprops={"marker": "x" , 'markersize': 10 } ,
-                palette=custom_palette ,
-                gap=0.2 ,
-                sharex=True, 
-                sharey=False,
-                height=6, 
-                aspect=.6,
-)
+# g = sns.catplot(
+#                 data=multiplex_11 , 
+#                 hue="treatment", 
+#                 y="cnp", 
+#                 col="biomarker",
+#                 col_wrap=3 ,
+#                 kind="box", 
+#                 whis=1.5 ,
+#                 flierprops={"marker": "x" , 'markersize': 10 } ,
+#                 palette=custom_palette ,
+#                 gap=0.2 ,
+#                 sharex=True, 
+#                 sharey=False,
+#                 height=6, 
+#                 aspect=.6,
+# )
 
 # %% point _ separate
 
-g = sns.catplot(
-                data=multiplex_11 , 
-                hue="treatment", 
-                legend='full' ,   # may not be neeed !
-                y="cnp", 
-                col="biomarker",
-                col_wrap=3 ,
-                kind="point", 
-                linestyle="none" ,
-                palette=custom_palette ,
+# g = sns.catplot(
+#                 data=multiplex_11 , 
+#                 hue="treatment", 
+#                 legend='full' ,   # may not be neeed !
+#                 y="cnp", 
+#                 col="biomarker",
+#                 col_wrap=3 ,
+#                 kind="point", 
+#                 linestyle="none" ,
+#                 palette=custom_palette ,
                 
-                marker="_", 
-                markersize=20, 
-                markeredgewidth=5,
-                errorbar=None,
+#                 marker="_", 
+#                 markersize=20, 
+#                 markeredgewidth=5,
+#                 errorbar=None,
                 
-                dodge=True , # When a hue variable is assigned ( like here ).
+#                 dodge=True , # When a hue variable is assigned ( like here ).
 
-                sharex=True, 
-                sharey=False,
-                height=6, 
-                aspect=.6,
-)
+#                 sharex=True, 
+#                 sharey=False,
+#                 height=6, 
+#                 aspect=.6,
+# )
 
 # %% overlay point
 
@@ -132,7 +132,7 @@ g.map_dataframe(
                 marker="_", 
                 markersize=20, 
                 markeredgewidth=5,
-                errorbar='sd',
+                errorbar='se',
                 
                 dodge=0.5 , # the exact value was defined by trial & error.
                     # if you don't define it, the strip plot & point-plot will separate each hue level differently.
@@ -197,16 +197,19 @@ plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 # %%'
 # %%'
 
-plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.pdf' )
-plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.svg' )
+# plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.pdf' )
+# plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.svg' )
 
+# plt.savefig( r'U:\kidney\histology\multiplex\plot\box_4.pdf' )
 
-plt.savefig( r'U:\kidney\histology\multiplex\plot\box_4.pdf' )
-
-
-plt.savefig( r'U:\kidney\histology\multiplex\plot\overlay_2.pdf' )
+# plt.savefig( r'U:\kidney\histology\multiplex\plot\overlay_2.pdf' )
 
 # %%'
+
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript.eps' )
+
 # %%'
 
 

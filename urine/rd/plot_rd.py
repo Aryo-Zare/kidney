@@ -1,5 +1,5 @@
 
-df_rd_3 = pd.read_pickle( r'U:\kidney\urine\rd\df_rd_3.pkl' )
+df_rd_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\df_rd_3.pkl' )
 
 # %%'
 
@@ -33,41 +33,6 @@ g = sns.FacetGrid(
                     aspect=1.2 
 )
 
-# %%'
-# %%'
-
-# g
-# stripplot
-g.map_dataframe( 
-                    sns.stripplot ,  
-                    x='time' , 
-                    y='value' ,   # choose between : 'value' , 'value_bc' , 'value_yjt', 'value_bc_yjt'
-                    size = 7 ,   
-                    dodge=True
-) 
-
-# %%'
-
-# g
-# overlayed boxplot on the previous plot.
-g.map_dataframe(
-                    sns.boxplot ,
-                    
-                    x='time' , 
-                    y='value' ,   # 'value' or 'value_bc'
-                    
-                    # notch=True, 
-                    # boxprops={"facecolor": (.3, .5, .7, .5)},
-                    medianprops={"color": "black", "linewidth": 2},
-                    
-                    whis=1.5 ,
-                    flierprops={"marker": "x" , 'markersize': 10 }
-)
-
-
-# whis : If scalar, whiskers are drawn to the farthest datapoint within whis * IQR from the nearest hinge.
-# dictionaries for customization : https://matplotlib.org/stable/gallery/statistics/boxplot.html#sphx-glr-gallery-statistics-boxplot-py
-
 # %%' pointplot
 
 # g
@@ -82,7 +47,7 @@ g.map_dataframe(
                     marker="o" ,  
                     estimator='mean' ,    
                     # capsize=0.2,
-                    errorbar='sd' ,
+                    errorbar='se' ,
                     dodge=0.2
 ) 
 
@@ -190,14 +155,6 @@ plt.suptitle( 'Urine release & density  accross time'   # Change from baseline o
 
 # %%'
 
-plt.suptitle( 'Urine release & density : change from baseline across time '   # Change from baseline of
-             '\n Baseline as TI ( transponder implantation )'
-             , x=0.4 
-             , fontsize=24 )
-#  \n mean_sd   #  for pointplot
-
-# %%'
-
 # rect : to avoid overlapping of the legend on the figure.
 plt.tight_layout( rect=[0, 0, 0.85 , 1] )
 
@@ -211,8 +168,9 @@ plt.tight_layout( rect=[0, 0, 0.85 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'U:\kidney\urine\rd\plot\point_3.pdf' )
-plt.savefig( r'U:\kidney\urine\rd\plot\point_3.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript.eps' )
 
 # %%'
 
