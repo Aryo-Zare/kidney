@@ -1,4 +1,10 @@
 
+
+# %%'
+
+import matplotlib.patches as mpatches
+import string
+
 # %%'
 
 df_serum_chem_6_od_or_yjt = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\df_serum_chem_6_od_or_yjt.pkl' )
@@ -46,6 +52,8 @@ custom_palette = {
 # Create a FacetGrid where each facet corresponds to a specific metric
 # col ( column ) is the main argument for .FacetGrid
     # to group the dataframe into multiple sub-frames.
+# aspect : when you removed the title, the height of the figure increased is automatically increased.
+    # hence the aspect of the figure area is changed  =>  you should increase the aspect here !
 g = sns.FacetGrid( 
                     df_serum_chem_6_od_or_yjt_2 , 
                     col="metric", 
@@ -53,7 +61,7 @@ g = sns.FacetGrid(
                     sharex=False , 
                     sharey=False , 
                     height=6, 
-                    aspect=1.2 ,
+                    aspect=1.6 ,
 )
 
 '''
@@ -92,26 +100,51 @@ g.map_dataframe(
 # %%'
 
 # Add a legend to clearly indicate which color corresponds to which group.
-g.add_legend()  # , bbox_to_anchor=(1.05, 0.5), borderaxespad=0 , loc='center left'
+# g.add_legend()  # , bbox_to_anchor=(1.05, 0.5), borderaxespad=0 , loc='center left'
 
 # g._legend.set_title("group" )
 
 # Increase the font size of the legend title
-g._legend.get_title().set_fontsize(20)  # Adjust the size as needed
+# g._legend.get_title().set_fontsize(20)  # Adjust the size as needed
 
-for text in g._legend.texts:
-    text.set_fontsize(20)  # Adjust as needed
+# %% Legend
+
+# also adding a legend for the overlapping gray normal range area, under the conventional legend.
+
+# import matplotlib.patches as mpatches
+
+# Get handles/labels from one of the axes
+ax0 = g.axes.flatten()[0]
+handles , labels = ax0.get_legend_handles_labels()
+
+# gray patch
+# Add the proxy patch
+# for the normal ranges.
+normal_patch = mpatches.Patch(color='lightgray', alpha=0.4, label='Normal range')
+handles.append(normal_patch)
+labels.append("Normal range")
+
+# frameon : the frame around the whole legend area.
+g.fig.legend( 
+                handles , 
+                labels , 
+                loc='center right' , 
+                frameon=False 
+)
+
+# for text in g._legend.texts:
+#     text.set_fontsize(20)  # Adjust as needed
 
 # %%'
 
 for ax in g.axes.flat:
-    plt.setp(ax.get_xticklabels(), rotation=45, fontsize=12)
+    plt.setp(ax.get_xticklabels(), rotation=45, fontsize=16)
 
 # Remove automatic axis ( row & column in the grid ) labels from all subplots
 g.set_axis_labels("", "")
 
 # Set the x-axis label for the bottom-right subplot to "stage"
-g.axes.flat[-1].set_xlabel("stage" , loc='right' , fontsize=16 )
+g.axes.flat[-1].set_xlabel("Time" , loc='right' , fontsize=24 )
 
 # %%'
 
@@ -120,7 +153,7 @@ g.axes.flat[-1].set_xlabel("stage" , loc='right' , fontsize=16 )
 
 new_titles = [
                 'Urea',
-                'Creatinin',
+                'Creatinine',
                 'Total protein',
                 'CRP'
 ]
@@ -138,7 +171,7 @@ unit = [
 ]
 
 for ax , i in zip( g.axes.flat , unit ) :
-    ax.set_ylabel( i , loc='top' , fontsize=16 )
+    ax.set_ylabel( i , loc='top' , fontsize=20 )
 
 # %%'  normal range
 
@@ -166,8 +199,45 @@ for ax, metric in zip( g.axes.flatten() , g.col_names ):
 # %%'
 
 # x= : the x location of the text in figure coordinates.
-plt.suptitle( 'Serum values across time' , x=0.4 , fontsize=24 )
+# plt.suptitle( 'Serum values across time' , x=0.4 , fontsize=24 )
 
+
+# %%'
+
+# C:\Users\azare\AppData\Local\miniconda3\envs\env_1\Lib\site-packages\seaborn\axisgrid.py:854: FutureWarning: 
+# Setting a gradient palette using color= is deprecated and will be removed in v0.14.0. Set `palette='dark:#4c72b0'` for the same effect.
+#   func(*plot_args, **plot_kwargs)
+
+# %% add subplot indexing letters
+
+# add subplot indexing letters.
+
+# import string
+
+# Suppose g is your FacetGrid / catplot result
+# this works for any number of subplots : you do not need to right a list of letter numbers based on the number of subplots.
+letters = list( string.ascii_uppercase )  # ['A','B','C','D',...]
+
+# ha , va : text alignment relative to the (x, y) coordinates you gave :
+    # ha='right' means the right edge of the letter is anchored at x=-0.1.
+    # va='bottom' means the bottom edge of the letter is anchored at y=1.05.
+# That combination places the letter just above and slightly to the left of the subplot, with the text extending leftward and upward from that anchor point.
+for ax , letter in zip( g.axes.flatten() , letters ):
+    ax.text(                           # the most important part !
+            -0.1, 1.05, letter,        # position relative to each axis.
+            transform=ax.transAxes,    # use axes fraction coords
+            fontsize=20, fontweight='bold',
+            va='bottom', ha='right'
+    )
+
+# transform=ax.transAxes :
+    # By default, when you call ax.text(x, y, ...), Matplotlib interprets x and y in data coordinates (the same units as your plotted data).
+        # Example: if your y‑axis goes from 0 to 100, then ax.text(0, 120, "label") would place text above the data range.
+    # transform=ax.transAxes tells Matplotlib: “Interpret (x, y) in axes fraction coordinates instead of data coordinates.”
+        # In this coordinate system:
+            # (0, 0) = bottom‑left corner of the subplot’s axes
+            # (1, 1) = top‑right corner of the subplot’s axes
+        # Values can go slightly outside that range (e.g. -0.1, 1.05) to nudge text just beyond the axes.
 
 # %%'
 
@@ -176,17 +246,11 @@ plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
 # %%'
 
-# C:\Users\azare\AppData\Local\miniconda3\envs\env_1\Lib\site-packages\seaborn\axisgrid.py:854: FutureWarning: 
-# Setting a gradient palette using color= is deprecated and will be removed in v0.14.0. Set `palette='dark:#4c72b0'` for the same effect.
-#   func(*plot_args, **plot_kwargs)
-
-# %%'
-
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_3.pdf' )   # serum_values
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_3.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_3.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_4.pdf' )   # serum_values
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_4.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_4.eps' )
 
 # %%'
 

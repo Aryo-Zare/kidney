@@ -30,7 +30,7 @@ g = sns.FacetGrid(
                     sharex=False , 
                     sharey=False , 
                     height=7, 
-                    aspect=1.2 
+                    aspect=1.4
 )
 
 # %%' pointplot
@@ -52,16 +52,44 @@ g.map_dataframe(
 ) 
 
 # %%'
+# %% Legend
+
+# also adding a legend for the overlapping gray normal range area, under the conventional legend.
+
+# import matplotlib.patches as mpatches
+
+# Get handles/labels from one of the axes
+ax0 = g.axes.flatten()[0]
+handles , labels = ax0.get_legend_handles_labels()
+
+# gray patch
+# Add the proxy patch
+# for the normal ranges.
+normal_patch = mpatches.Patch(color='lightgray', alpha=0.4, label='Normal range')
+handles.append(normal_patch)
+labels.append("Normal range")
+
+# frameon : the frame around the whole legend area.
+g.fig.legend( 
+                handles , 
+                labels , 
+                loc='center right' , 
+                frameon=False 
+)
+
+# for text in g._legend.texts:
+#     text.set_fontsize(20)  # Adjust as needed
+
 # %%'
 
 # Add a legend to clearly indicate which color corresponds to which group.
-g.add_legend()  # , bbox_to_anchor=(1.05, 0.5), borderaxespad=0 , loc='center left'
-g._legend.set_title("group" )
-# Increase the font size of the legend title
-g._legend.get_title().set_fontsize(20)  # Adjust the size as needed
+# g.add_legend()  # , bbox_to_anchor=(1.05, 0.5), borderaxespad=0 , loc='center left'
+# g._legend.set_title("group" )
+# # Increase the font size of the legend title
+# g._legend.get_title().set_fontsize(20)  # Adjust the size as needed
 
-for text in g._legend.texts:
-    text.set_fontsize(20)  # Adjust as needed
+# for text in g._legend.texts:
+#     text.set_fontsize(20)  # Adjust as needed
 
 # %%'
 
@@ -72,7 +100,7 @@ for ax in g.axes.flat:
 g.set_axis_labels("", "")
 
 # Set the x-axis label for the bottom-right subplot to "stage"
-g.axes.flat[-1].set_xlabel("stage" , loc='right' , fontsize=16 )
+g.axes.flat[-1].set_xlabel("Time" , loc='right' , fontsize=24 )
 
 # %%'
 
@@ -105,7 +133,7 @@ unit = [
 ]
 
 for ax , i in zip( g.axes.flat , unit ) :
-    ax.set_ylabel( i , loc='top' , fontsize=16 )
+    ax.set_ylabel( i , loc='top' , fontsize=20 )
 
 
 # %%'  normal range
@@ -144,13 +172,44 @@ a
 b
     # Out[25]: 772
 
+# %% add subplot indexing letters
+
+# add subplot indexing letters.
+
+# import string
+
+# Suppose g is your FacetGrid / catplot result
+# this works for any number of subplots : you do not need to right a list of letter numbers based on the number of subplots.
+letters = list( string.ascii_uppercase )  # ['A','B','C','D',...]
+
+# ha , va : text alignment relative to the (x, y) coordinates you gave :
+    # ha='right' means the right edge of the letter is anchored at x=-0.1.
+    # va='bottom' means the bottom edge of the letter is anchored at y=1.05.
+# That combination places the letter just above and slightly to the left of the subplot, with the text extending leftward and upward from that anchor point.
+for ax , letter in zip( g.axes.flatten() , letters ):
+    ax.text(                           # the most important part !
+            -0.1, 1.05, letter,        # position relative to each axis.
+            transform=ax.transAxes,    # use axes fraction coords
+            fontsize=20, fontweight='bold',
+            va='bottom', ha='right'
+    )
+
+# transform=ax.transAxes :
+    # By default, when you call ax.text(x, y, ...), Matplotlib interprets x and y in data coordinates (the same units as your plotted data).
+        # Example: if your y‑axis goes from 0 to 100, then ax.text(0, 120, "label") would place text above the data range.
+    # transform=ax.transAxes tells Matplotlib: “Interpret (x, y) in axes fraction coordinates instead of data coordinates.”
+        # In this coordinate system:
+            # (0, 0) = bottom‑left corner of the subplot’s axes
+            # (1, 1) = top‑right corner of the subplot’s axes
+        # Values can go slightly outside that range (e.g. -0.1, 1.05) to nudge text just beyond the axes.
+
 # %%'
 
 # x= : the x location of the text in figure coordinates.
-plt.suptitle( 'Urine release & density  accross time'   # Change from baseline of
-             # '\n ( after outlier removal )'    # outlier removal_   after baseline correction _ baseline as explantation time
-             , x=0.4 
-             , fontsize=24 )
+# plt.suptitle( 'Urine release & density  accross time'   # Change from baseline of
+#              # '\n ( after outlier removal )'    # outlier removal_   after baseline correction _ baseline as explantation time
+#              , x=0.4 
+#              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
 
 # %%'
@@ -168,9 +227,9 @@ plt.tight_layout( rect=[0, 0, 0.85 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_2.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_2.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_2.eps' )
 
 # %%'
 

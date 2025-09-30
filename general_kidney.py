@@ -1,4 +1,7 @@
 
+# the non-standard 'ZC6' entry was renamed to 'ZC06' via Excel itself.
+overview_2 = pd.read_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\overview_2.xlsx' , header=[0,1] )  # , index_col=0 
+
 # %%
 
 # bw : body weight
@@ -32,6 +35,7 @@ bw[:4]
 # first level of the multi-index columns.
 first_level = bw.columns.get_level_values(0)
 
+# here, the second-level  may have mistakenly been pasted at the output.
 first_level
     # Out[20]: 
     # Index(['Unnamed: 0_level_1', 'Unnamed: 1_level_1', 'Unnamed: 2_level_1',

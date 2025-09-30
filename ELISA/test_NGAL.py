@@ -22,7 +22,8 @@ g = sns.catplot(
                 hue="treatment" ,
                 marker="o" ,  
                 estimator='mean' ,    
-                errorbar='sd' ,
+                errorbar='se' ,
+                # err_kws={"color": "black", "linewidth": 2} ,  # cap can also be defined here.
                 dodge=0.2 ,  #  TRUE , 0.4
                 height=8, 
                 aspect=1 ,
@@ -38,15 +39,17 @@ g.map_dataframe(
                 y='value',
                 hue='treatment',
                 dodge=0.01,
-                jitter=True,
+                jitter=False,
                 size=10,
+                linewidth=2 ,
+                edgecolor = 'black' ,  
                 palette=custom_palette
 )
 
 # %%
 
 # Set y-axis to log scale
-g.set(yscale="log")
+# g.set(yscale="log")
 
 
 g.set(ylim=(0, 1500))
@@ -71,11 +74,11 @@ for ax in g.axes.flat:
 g.set_axis_labels("", "")
 
 # Set the x-axis label for the bottom-right subplot to "stage"
-g.axes.flat[-1].set_xlabel("time" , loc='right' , fontsize=24 )
+g.axes.flat[-1].set_xlabel("Time" , loc='right' , fontsize=24 )
 
 # %%
 
-plt.ylabel( 'µg/ml' , loc='top' , fontsize=20 )
+plt.ylabel( 'ng/ml' , loc='top' , fontsize=22 )
 
 # %%
 
@@ -90,10 +93,10 @@ plt.ylabel( 'µg/ml' , loc='top' , fontsize=20 )
 # %%
 
 # x= : the x location of the text in figure coordinates.
-plt.title( 'NGAL (serum) \n SD'   # Change from baseline of
-             # '\n ( after outlier removal )'    # outlier removal_   after baseline correction _ baseline as explantation time
-             , x=0.4 
-             , fontsize=24 )
+# plt.title( 'NGAL (serum) \n SD'   # Change from baseline of
+#              # '\n ( after outlier removal )'    # outlier removal_   after baseline correction _ baseline as explantation time
+#              , x=0.4 
+#              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
 
 # %%
@@ -103,8 +106,9 @@ plt.tight_layout( rect=[0, 0, 0.75 , 1] )
 
 # %%
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim_4.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim_4.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim_4.svg' )
 
 
 # %%

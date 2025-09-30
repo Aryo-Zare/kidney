@@ -50,8 +50,8 @@ g = sns.FacetGrid(
                     col_wrap=1, 
                     sharex=False , 
                     sharey=False , 
-                    height=6, 
-                    aspect=1.8 
+                    height=6,  # chane the size of the figure here, & at te line below !
+                    aspect=2.4
 )
 
 # %%
@@ -71,27 +71,45 @@ g.map_dataframe(
 ) 
 
 
-# %%
+# %% Legend
 
-# Add a legend to clearly indicate which color corresponds to which group.
-g.add_legend()  # , bbox_to_anchor=(1.05, 0.5), borderaxespad=0 , loc='center left'
-g._legend.set_title("group" )
-# Increase the font size of the legend title
-g._legend.get_title().set_fontsize(20)  # Adjust the size as needed
+# also adding a legend for the overlapping gray normal range area, under the conventional legend.
 
-for text in g._legend.texts:
-    text.set_fontsize(20)  # Adjust as needed
+# import matplotlib.patches as mpatches
+
+# Get handles/labels from one of the axes
+ax0 = g.axes.flatten()[0]
+handles , labels = ax0.get_legend_handles_labels()
+
+# gray patch
+# Add the proxy patch
+# for the normal ranges.
+normal_patch = mpatches.Patch(color='lightgray', alpha=0.4, label='Normal range')
+handles.append(normal_patch)
+labels.append("Normal range")
+
+# frameon : the frame around the whole legend area.
+g.fig.legend( 
+                handles , 
+                labels , 
+                loc='center right' , 
+                frameon=False 
+)
+
+# for text in g._legend.texts:
+#     text.set_fontsize(20)  # Adjust as needed
+
 
 # %%
 
 for ax in g.axes.flat:
-    plt.setp(ax.get_xticklabels(), rotation=45, fontsize=12)
+    plt.setp(ax.get_xticklabels(), rotation=45, fontsize=16)
 
 # Remove automatic axis ( row & column in the grid ) labels from all subplots
 g.set_axis_labels("", "")
 
 # Set the x-axis label for the bottom-right subplot to "stage"
-g.axes.flat[-1].set_xlabel("stage" , loc='right' , fontsize=16 )
+g.axes.flat[-1].set_xlabel("Time" , loc='right' , fontsize=24 )
 
 # %%
 
@@ -114,13 +132,44 @@ unit = [
 for ax , i in zip( g.axes.flat , unit ) :
     ax.set_ylabel( i , loc='top' , fontsize=16 )
 
+# %% add subplot indexing letters
+
+# add subplot indexing letters.
+
+# import string
+
+# Suppose g is your FacetGrid / catplot result
+# this works for any number of subplots : you do not need to right a list of letter numbers based on the number of subplots.
+letters = list( string.ascii_uppercase )  # ['A','B','C','D',...]
+
+# ha , va : text alignment relative to the (x, y) coordinates you gave :
+    # ha='right' means the right edge of the letter is anchored at x=-0.1.
+    # va='bottom' means the bottom edge of the letter is anchored at y=1.05.
+# That combination places the letter just above and slightly to the left of the subplot, with the text extending leftward and upward from that anchor point.
+for ax , letter in zip( g.axes.flatten() , letters ):
+    ax.text(                           # the most important part !
+            -0.1, 1.05, letter,        # position relative to each axis.
+            transform=ax.transAxes,    # use axes fraction coords
+            fontsize=20, fontweight='bold',
+            va='bottom', ha='right'
+    )
+
+# transform=ax.transAxes :
+    # By default, when you call ax.text(x, y, ...), Matplotlib interprets x and y in data coordinates (the same units as your plotted data).
+        # Example: if your y‑axis goes from 0 to 100, then ax.text(0, 120, "label") would place text above the data range.
+    # transform=ax.transAxes tells Matplotlib: “Interpret (x, y) in axes fraction coordinates instead of data coordinates.”
+        # In this coordinate system:
+            # (0, 0) = bottom‑left corner of the subplot’s axes
+            # (1, 1) = top‑right corner of the subplot’s axes
+        # Values can go slightly outside that range (e.g. -0.1, 1.05) to nudge text just beyond the axes.
+
 # %%
 
 # x= : the x location of the text in figure coordinates.
-plt.suptitle( 'Urinalysis'   # Change from baseline of
-             # '\n ( after outlier removal )'    # outlier removal_   after baseline correction _ baseline as explantation time
-             , x=0.4 
-             , fontsize=24 )
+# plt.suptitle( 'Urinalysis'   # Change from baseline of
+#              # '\n ( after outlier removal )'    # outlier removal_   after baseline correction _ baseline as explantation time
+#              , x=0.4 
+#              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
 
 # %%
@@ -130,9 +179,9 @@ plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 
 # %%
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_3.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_3.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_3.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_5.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_5.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_5.eps' )
 
 # %%
 

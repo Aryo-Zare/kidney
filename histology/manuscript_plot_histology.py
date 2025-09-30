@@ -175,12 +175,42 @@ g._legend.set_title("" )
 # for text in g._legend.texts:
 #     text.set_fontsize(20)  # Adjust as needed
 
+# %% add subplot indexing letters
+
+# add subplot indexing letters.
+
+# import string
+
+# Suppose g is your FacetGrid / catplot result
+# this works for any number of subplots : you do not need to right a list of letter numbers based on the number of subplots.
+letters = list( string.ascii_uppercase )  # ['A','B','C','D',...]
+
+# ha , va : text alignment relative to the (x, y) coordinates you gave :
+    # ha='right' means the right edge of the letter is anchored at x=-0.1.
+    # va='bottom' means the bottom edge of the letter is anchored at y=1.05.
+# That combination places the letter just above and slightly to the left of the subplot, with the text extending leftward and upward from that anchor point.
+for ax , letter in zip( g.axes.flatten() , letters ):
+    ax.text(                           # the most important part !
+            -0.1, 1.05, letter,        # position relative to each axis.
+            transform=ax.transAxes,    # use axes fraction coords
+            fontsize=20, fontweight='bold',
+            va='bottom', ha='right'
+    )
+
+# transform=ax.transAxes :
+    # By default, when you call ax.text(x, y, ...), Matplotlib interprets x and y in data coordinates (the same units as your plotted data).
+        # Example: if your y‑axis goes from 0 to 100, then ax.text(0, 120, "label") would place text above the data range.
+    # transform=ax.transAxes tells Matplotlib: “Interpret (x, y) in axes fraction coordinates instead of data coordinates.”
+        # In this coordinate system:
+            # (0, 0) = bottom‑left corner of the subplot’s axes
+            # (1, 1) = top‑right corner of the subplot’s axes
+        # Values can go slightly outside that range (e.g. -0.1, 1.05) to nudge text just beyond the axes.
 
 # %%
 
-plt.suptitle( 'Kidney Histopatholgy'    
-             , x=0.4 
-             , fontsize=24 )
+# plt.suptitle( 'Kidney Histopatholgy'    
+#              , x=0.4 
+#              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
 
 # %%
@@ -198,9 +228,9 @@ plt.tight_layout( rect=[0, 0, 0.77 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript_2.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript_2.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript_2.eps' )
 
 # %%
 # %%

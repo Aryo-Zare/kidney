@@ -45,7 +45,7 @@ g = sns.catplot(
                 palette=custom_palette ,
                 
                 dodge=True , # When a hue variable is assigned ( like here ).
-                jitter=True , #  You can specify the amount of jitter (half the width of the uniform random variable support), 
+                jitter=False , #  You can specify the amount of jitter (half the width of the uniform random variable support), 
                                     # or use True for a good default.
                 sharex=True, 
                 sharey=False, # despite the unit of all y axes being 'cell count(%)', the y axis can not be shared.
@@ -149,6 +149,10 @@ g.set(xticks=[])
 
 # x axes do nbot have any labels !
 
+# %%
+
+g._legend.set_title("" )  # group _ the original legend title is the column name ( treatment )
+
 # %% y-axis label
 
 # put the y-label of the left side subplots.
@@ -183,11 +187,42 @@ for ax , i in zip( g.axes.flat , new_titles ):
 # %%'
 
 # x= : the x location of the text in figure coordinates.
-plt.suptitle( 'Multiplex histology of renal tissue'  \
-             '\n Percentage of cells with each biomarker positive'    
-             , x=0.4 
-             , fontsize=24 )
+# plt.suptitle( 'Multiplex histology of renal tissue'  \
+#              '\n Percentage of cells with each biomarker positive'    
+#              , x=0.4 
+#              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
+
+# %% add subplot indexing letters
+
+# add subplot indexing letters.
+
+# import string
+
+# Suppose g is your FacetGrid / catplot result
+# this works for any number of subplots : you do not need to right a list of letter numbers based on the number of subplots.
+letters = list( string.ascii_uppercase )  # ['A','B','C','D',...]
+
+# ha , va : text alignment relative to the (x, y) coordinates you gave :
+    # ha='right' means the right edge of the letter is anchored at x=-0.1.
+    # va='bottom' means the bottom edge of the letter is anchored at y=1.05.
+# That combination places the letter just above and slightly to the left of the subplot, with the text extending leftward and upward from that anchor point.
+for ax , letter in zip( g.axes.flatten() , letters ):
+    ax.text(                           # the most important part !
+            -0.1, 1.05, letter,        # position relative to each axis.
+            transform=ax.transAxes,    # use axes fraction coords
+            fontsize=20, fontweight='bold',
+            va='bottom', ha='right'
+    )
+
+# transform=ax.transAxes :
+    # By default, when you call ax.text(x, y, ...), Matplotlib interprets x and y in data coordinates (the same units as your plotted data).
+        # Example: if your y‑axis goes from 0 to 100, then ax.text(0, 120, "label") would place text above the data range.
+    # transform=ax.transAxes tells Matplotlib: “Interpret (x, y) in axes fraction coordinates instead of data coordinates.”
+        # In this coordinate system:
+            # (0, 0) = bottom‑left corner of the subplot’s axes
+            # (1, 1) = top‑right corner of the subplot’s axes
+        # Values can go slightly outside that range (e.g. -0.1, 1.05) to nudge text just beyond the axes.
 
 # %%'
 
@@ -206,9 +241,9 @@ plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 
 # %%'
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript_2.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript_2.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript_2.eps' )
 
 # %%'
 
