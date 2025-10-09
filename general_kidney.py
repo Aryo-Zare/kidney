@@ -2,6 +2,9 @@
 # the non-standard 'ZC6' entry was renamed to 'ZC06' via Excel itself.
 overview_2 = pd.read_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\overview_2.xlsx' , header=[0,1] )  # , index_col=0 
 
+# if the file would already be open in Excel :
+    # PermissionError: [Errno 13] Permission denied: 'F:\\OneDrive - Uniklinik RWTH Aachen\\kidney\\overview_2.xlsx'
+
 # %%
 
 # bw : body weight
@@ -78,6 +81,12 @@ bw['sample_ID'].unique()
     #        'ZC52', 'ZC53', 'ZC54', 'ZC55', 'ZC56', 'ZC57', 'ZC58', 'ZC59',
     #        'ZC60', 'ZC61', 'ZC62', 'ZC63', 'ZC64', 'ZC65', 'ZC66', 'ZC67',
     #        'ZC68', 'ZC69', nan], dtype=object)
+
+
+bw['treatment'].unique()
+    # Out[15]: 
+    # array(['DBD-HTK', 'DBD-Ecosol', '-', 'DCD-HTK', 'DCD-Ecoflow', 'TBB',
+    #        'DBD-Ecoflow', 'DCD-Ecosol', 'NMP', nan], dtype=object)
 
 # %%
 
