@@ -14,16 +14,37 @@
 
 # df_NGAL_3.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\df_NGAL_3.pkl' )
 
-df_NGAL_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\df_NGAL_3.pkl' )
+# df_NGAL_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\df_NGAL_3.pkl' )
+
+# %%
+
+# rename_dict = {
+#                 'DBD-HTK': 'SCS-HTK' ,
+#                 'DBD-Omnisol' : 'SCS-Omnisol' ,
+#                 'NMP' : 'NMP-Omnisol'
+# }
+
+
+# df_NGAL_3['treatment'].replace( to_replace=rename_dict , inplace=True )
+
+# %%
+
+# df_NGAL_4 = df_NGAL_3.copy()
+
+# df_NGAL_4.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\df_NGAL_4.pkl' )
+
+df_NGAL_4 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\df_NGAL_4.pkl' )
+
 
 # %%
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "DBD-HTK": "green", 
-                    "DBD-Omnisol": "blue", 
-                    "NMP": "red" 
+                    "SCS-HTK": "green", 
+                    "SCS-Omnisol": "blue", 
+                    "NMP-Omnisol": "red" 
 }
+
 
 # %%
 
@@ -120,9 +141,8 @@ plt.tight_layout( rect=[0, 0, 0.75 , 1] )
 
 # %%
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim_5.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim_5.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\plot\test_NGAL\point_strip_ylim_5.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\NGAL.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\NGAL.svg' )
 
 
 # %%

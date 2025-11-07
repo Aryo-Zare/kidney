@@ -1,43 +1,59 @@
 
-# strangely, this data is stored in BG folder !!
-df_urine_8 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_urine_8.pkl' )
+# # strangely, this data is stored in BG folder !!
+# df_urine_8 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_urine_8.pkl' )
 
-# df_urine_8 = pd.read_pickle( r'U:\kidney\BG\df_urine_8.pkl' )
-
-# %%
-
-df_urine_8["metric"].unique()
-    # Out[120]: 
-    # ['Urea', 'Creatinin', 'Na+', 'K+', 'protein']
-    # Categories (5, object): ['Urea' < 'Creatinin' < 'protein' < 'Na+' < 'K+']
+# # df_urine_8 = pd.read_pickle( r'U:\kidney\BG\df_urine_8.pkl' )
 
 # %%
 
-mask =  df_urine_8["metric"].isin([ 'Urea', 'Creatinin', 'protein' ]) 
-df_urine_8_2 = df_urine_8[ mask ]
+# df_urine_8["metric"].unique()
+#     # Out[120]: 
+#     # ['Urea', 'Creatinin', 'Na+', 'K+', 'protein']
+#     # Categories (5, object): ['Urea' < 'Creatinin' < 'protein' < 'Na+' < 'K+']
 
 # %%
 
-metric_order = [ 'Urea', 'Creatinin', 'protein'  ]
-df_urine_8_2['metric'] = pd.Categorical(
-                                            df_urine_8_2['metric'],
-                                            categories=metric_order,
-                                            ordered=True
-)
+# mask =  df_urine_8["metric"].isin([ 'Urea', 'Creatinin', 'protein' ]) 
+# df_urine_8_2 = df_urine_8[ mask ]
 
 # %%
 
-df_urine_8_2["metric"].unique()
-    # Out[123]: 
-    # ['Urea', 'Creatinin', 'protein']
-    # Categories (3, object): ['Urea' < 'Creatinin' < 'protein']
+# metric_order = [ 'Urea', 'Creatinin', 'protein'  ]
+# df_urine_8_2['metric'] = pd.Categorical(
+#                                             df_urine_8_2['metric'],
+#                                             categories=metric_order,
+#                                             ordered=True
+# )
+
+# %%
+
+# df_urine_8_2["metric"].unique()
+#     # Out[123]: 
+#     # ['Urea', 'Creatinin', 'protein']
+#     # Categories (3, object): ['Urea' < 'Creatinin' < 'protein']
+
+# %%
+
+# df_urine_8_2['treatment'] = (
+#                                 df_urine_8_2['treatment']
+#                                 .replace({'DBD-Ecosol': 'DBD-Omnisol'})
+# )
+
+# df_urine_8_3 = df_urine_8_2.copy()
+
+# %%
+
+# df_urine_8_3.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_urine_8_3.pkl' )
+
+df_urine_8_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_urine_8_3.pkl' )
+
 
 # %%
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
                     "DBD-HTK": "green", 
-                    "DBD-Ecosol": "blue", 
+                    "DBD-Omnisol": "blue", 
                     "NMP": "red" 
 }
 
@@ -45,7 +61,7 @@ custom_palette = {
 
 # Create a FacetGrid where each facet corresponds to a specific metric
 g = sns.FacetGrid( 
-                    df_urine_8_2 , 
+                    df_urine_8_3 , 
                     col="metric",  # columns : subplots.
                     col_wrap=1, 
                     sharex=False , 
@@ -179,9 +195,9 @@ plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 
 # %%
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_5.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_5.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_5.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_6.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_6.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\plot\manuscript_urinalysis_value_6.eps' )
 
 # %%
 

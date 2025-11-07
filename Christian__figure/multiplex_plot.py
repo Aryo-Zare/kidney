@@ -1,7 +1,7 @@
 
 # multiplex_11 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_11.pkl' )
 
-# %%
+# %%'
 
 # multiplex_11[:4]
 #     # Out[90]: 
@@ -11,7 +11,7 @@
 #     # 10      ZC09  DBD-Ecosol  HMGB1+_% 0.227194
 #     # 11      ZC11  DBD-Ecosol  HMGB1+_% 0.062555
 
-# %%
+# %%'
 
 # multiplex_11['treatment'] = (
 #                                 multiplex_11['treatment']
@@ -20,23 +20,40 @@
 
 # multiplex_12 = multiplex_11.copy()
 
-# %%
+# %%'
 
 # multiplex_12.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_12.pkl' )
 
-multiplex_12 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_12.pkl' )
+# multiplex_12 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_12.pkl' )
 
+# %%'
+
+# rename_dict = {
+#                 'DBD-HTK': 'SCS-HTK' ,
+#                 'DBD-Omnisol' : 'SCS-Omnisol' ,
+#                 'NMP' : 'NMP-Omnisol'
+# }
+
+
+# multiplex_12['treatment'].replace( to_replace=rename_dict , inplace=True )
+
+# %%'
+
+# multiplex_13 = multiplex_12.copy()
+
+# multiplex_13.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_13.pkl' )
+
+multiplex_13 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_13.pkl' )
 
 # %%'
 
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "DBD-HTK": "green", 
-                    "DBD-Omnisol": "blue", 
-                    "NMP": "red" 
+                    "SCS-HTK": "green", 
+                    "SCS-Omnisol": "blue", 
+                    "NMP-Omnisol": "red" 
 }
-
 
 
 # %% strip
@@ -51,7 +68,7 @@ custom_palette = {
 
 g = sns.catplot(
                 kind="strip",             
-                data=multiplex_12 , 
+                data=multiplex_13 , 
                 hue="treatment", 
                 legend='full' ,   # may not be needed !
                 y="cnp", 
@@ -140,7 +157,7 @@ g = sns.catplot(
 
 g.map_dataframe(
                 sns.pointplot ,
-                data=multiplex_11 , 
+                data=multiplex_13 , 
                 hue="treatment", 
                 legend='full' ,   # may not be needed !
                 y="cnp", 
@@ -167,7 +184,7 @@ g.set(xticks=[])
 
 # x axes do nbot have any labels !
 
-# %%
+# %%'
 
 g._legend.set_title("" )  # group _ the original legend title is the column name ( treatment )
 
@@ -242,13 +259,49 @@ for ax , letter in zip( g.axes.flatten() , letters ):
             # (1, 1) = top‑right corner of the subplot’s axes
         # Values can go slightly outside that range (e.g. -0.1, 1.05) to nudge text just beyond the axes.
 
+# %%' annotate
+
+# note : the different colors ( treatment categories ) are dodge-separated : not tick-separated !
+    # possibly most annotation programs work on ticks & not dodging !
+    # Original seaborn plot : No x-axis input : instead ; hue
+    # Dodging the hue : all 3 'treatment' categories were originally overlapped on 1 tick : at position : 0 : on x-axis
+    # after dodging, this position 0  was expendad +/- 0.25 .
+    # the package ; statannotations : does not work with dodged separations !
+        # this is generally expected , since 
+            # few instances are so wide dodges
+            # without x-axis input into the face-grid ( only hue at x-axis ).
+            # dodge is usually a small amount to improve visualization.
+
+
+# Suppose subplot-4 corresponds to index 3 (0-based)
+ax = g.axes.flatten()[3]
+
+# left & right ends of the line.
+x1, x2 = -0.25, 0
+
+
+y = ax.get_ylim()[1] * 0.75   # place bar near the top of the y-axis
+h = 0.6                      # height of the bracket ( vertical thickness ).
+col = 'k'
+
+# Draw the bar
+ax.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=3, c=col)
+
+# Add the star (or "**" depending on p-value)
+# va : vertical alignment : means the bottom of the text sits at y+h+0.01.
+ax.text((x1+x2)*.5, y+h+0.01, "*", ha='center', va='bottom', color=col, fontsize=24)
+
+# after the annotation, the x-axis range gets ruined !
+# re-adjust it.
+plt.xlim( -0.5 , 0.5 )
+
 # %%'
 
 # rect : to avoid overlapping of the legend on the figure.
 plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 
 # %%'
-# %%'
+
 
 # plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.pdf' )
 # plt.savefig( r'U:\kidney\histology\multiplex\plot\strip_point.svg' )
@@ -259,12 +312,10 @@ plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 
 # %%'
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript_3.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript_3.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\plot\multiplex_manuscript_3.eps' )
-
-# %%'
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\multiplex.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\multiplex.svg' )
 
 
 # %%'
+
 

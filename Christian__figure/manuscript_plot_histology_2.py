@@ -37,15 +37,36 @@
 
 # df_hist_8.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_8.pkl' )
 
-df_hist_8 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_8.pkl' )
+# df_hist_8 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_8.pkl' )
+
+# %%
+
+# rename_dict = {
+#                 'DBD-HTK': 'SCS-HTK' ,
+#                 'DBD-Omnisol' : 'SCS-Omnisol' ,
+#                 'NMP' : 'NMP-Omnisol'
+# }
+
+
+# df_hist_8['treatment'].replace( to_replace=rename_dict , inplace=True )
+
+# %%
+
+# df_hist_9 = df_hist_8.copy()
+
+# df_hist_9.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_9.pkl' )
+
+df_hist_9 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_9.pkl' )
+
+
 
 # %%
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "DBD-HTK": "green", 
-                    "DBD-Omnisol": "blue", 
-                    "NMP": "red" 
+                    "SCS-HTK": "green", 
+                    "SCS-Omnisol": "blue", 
+                    "NMP-Omnisol": "red" 
 }
 
 
@@ -59,7 +80,7 @@ custom_palette = {
                         # yet, there will be no legend at the side of the plot.
 
 g = sns.catplot(
-                data=df_hist_8 , 
+                data=df_hist_9 , 
                 hue="treatment", 
                 legend='full' ,   # may not be neeed !
                 y="value", 
@@ -90,7 +111,7 @@ g = sns.catplot(
 
 g.map_dataframe(
                 sns.pointplot ,
-                data=df_hist_7 , 
+                data=df_hist_9 , 
                 hue="treatment", 
                 legend='full' ,   # may not be needed !
                 y="value", 
@@ -244,9 +265,9 @@ plt.tight_layout( rect=[0, 0, 0.77 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript_3.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript_3.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\plot\histopatholoy_manuscript_3.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\histopatholoy.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\histopatholoy.svg' )
+
 
 # %%
 # %%

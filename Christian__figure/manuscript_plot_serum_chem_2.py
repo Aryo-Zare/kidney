@@ -52,21 +52,27 @@ import string
 # df_serum_chem_6_od_or_yjt_3.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\df_serum_chem_6_od_or_yjt_3.pkl' )
 
 # the original one ( without 'ucr' ( urea/creatinine ratio ) )
-df_serum_chem_6_od_or_yjt_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\df_serum_chem_6_od_or_yjt_3.pkl' )
+# df_serum_chem_6_od_or_yjt_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\df_serum_chem_6_od_or_yjt_3.pkl' )
 
 # this is the most important frame.
 # contains 'ucr'.
+
+
+# with outliers
 df_serum_chem_ucr_value_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\df_serum_chem_ucr_value_3.pkl' )
+# without outliers
+df_serum_chem_ucr_value_3_ro = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\df_serum_chem_ucr_value_3_ro.pkl' )
 
 
 # %%'
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "DBD-HTK": "green", 
-                    "DBD-Omnisol": "blue", 
-                    "NMP": "red" 
+                    "SCS-HTK": "green", 
+                    "SCS-Omnisol": "blue", 
+                    "NMP-Omnisol": "red" 
 }
+
 
 # %% grid
 
@@ -76,7 +82,7 @@ custom_palette = {
 # aspect : when you removed the title, the height of the figure increased is automatically increased.
     # hence the aspect of the figure area is changed  =>  you should increase the aspect here !
 g = sns.FacetGrid( 
-                    df_serum_chem_6_od_or_yjt_3 , 
+                    df_serum_chem_ucr_value_3_ro , 
                     col="metric", 
                     col_wrap=2, 
                     sharex=False , 
@@ -165,6 +171,11 @@ for ax in g.axes.flat:
 g.set_axis_labels("", "")
 
 # Set the x-axis label for the bottom-right subplot to "stage"
+
+# the one on the bottom right.
+g.axes.flat[3].set_xlabel("Time" , loc='right' , fontsize=24 )
+
+# for the last subplot
 g.axes.flat[-1].set_xlabel("Time" , loc='right' , fontsize=24 )
 
 # %%'
@@ -175,6 +186,7 @@ g.axes.flat[-1].set_xlabel("Time" , loc='right' , fontsize=24 )
 new_titles = [
                 'Urea',
                 'Creatinine',
+                'urea/creatinine ratio',
                 'Total protein',
                 'CRP'
 ]
@@ -187,6 +199,7 @@ for ax , i in zip( g.axes.flat , new_titles ):
 unit = [ 
         'mmol/L' ,
         'mmol/L' ,
+        'ratio',
         'g/dL' ,
         'mg/dL' 
 ]
@@ -210,12 +223,13 @@ normal_ranges = {
 # %%%'
 
 for ax, metric in zip( g.axes.flatten() , g.col_names ):
-    lower, upper = normal_ranges[metric]
-    # shade the band
-    ax.axhspan( lower , upper , color='lightgray', alpha=0.4)
-    # draw the boundary lines
-    ax.axhline( lower , color='gray', linestyle='--', linewidth=1)
-    ax.axhline( upper , color='gray', linestyle='--', linewidth=1)
+    if metric in normal_ranges :  # I don't know the normal value for ucr.
+        lower, upper = normal_ranges[metric]
+        # shade the band
+        ax.axhspan( lower , upper , color='lightgray', alpha=0.4)
+        # draw the boundary lines
+        ax.axhline( lower , color='gray', linestyle='--', linewidth=1)
+        ax.axhline( upper , color='gray', linestyle='--', linewidth=1)
 
 # %%'
 
@@ -269,9 +283,8 @@ plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_5.pdf' )   # serum_values
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_5.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\plot\manuscript\serum_values_5.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\serum_values_2.pdf' )   # serum_values
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\serum_values_2.svg' ) 
 
 # %%'
 

@@ -44,16 +44,36 @@
 
 # df_bg_8_3.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_bg_8_3.pkl' )
 
-df_bg_8_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_bg_8_3.pkl' )
+# df_bg_8_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_bg_8_3.pkl' )
+
+# %%
+
+# rename_dict = {
+#                 'DBD-HTK': 'SCS-HTK' ,
+#                 'DBD-Omnisol' : 'SCS-Omnisol' ,
+#                 'NMP' : 'NMP-Omnisol'
+# }
+
+
+# df_bg_8_3['treatment'].replace( to_replace=rename_dict , inplace=True )
+
+# %%
+
+# df_bg_8_4 = df_bg_8_3.copy()
+
+# df_bg_8_4.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_bg_8_4.pkl' )
+
+df_bg_8_4 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_bg_8_4.pkl' )
+
 
 
 # %%'
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "DBD-HTK": "green", 
-                    "DBD-Omnisol": "blue", 
-                    "NMP": "red" 
+                    "SCS-HTK": "green", 
+                    "SCS-Omnisol": "blue", 
+                    "NMP-Omnisol": "red" 
 }
 
 # %%'
@@ -61,7 +81,7 @@ custom_palette = {
 
 # Create a FacetGrid where each facet corresponds to a specific metric
 g = sns.FacetGrid( 
-                    df_bg_8_3 , 
+                    df_bg_8_4 , 
                     col="metric", 
                     col_wrap=2, 
                     sharex=False , 
@@ -179,11 +199,11 @@ for ax, metric in zip( g.axes.flatten() , g.col_names ):
 # check the existence of an item in a dictionary :
     # it checks the keys of the dictionary.
 
-'pH' in normal_ranges
-    # Out[111]: True
+# 'pH' in normal_ranges
+#     # Out[111]: True
 
-'g' in normal_ranges
-    # Out[110]: False
+# 'g' in normal_ranges
+#     # Out[110]: False
 
 # %%'
 
@@ -230,9 +250,9 @@ plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\plot\manuscript_bg_values_5.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\plot\manuscript_bg_values_5.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\plot\manuscript_bg_values_5.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\blood_gas.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\blood_gas.svg' )
+
 
 # %%'
 

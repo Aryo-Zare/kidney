@@ -11,6 +11,7 @@ import os
 
 import numpy as np
 import pandas as pd
+
 import statsmodels.formula.api as smf
 import statsmodels.api as sm
 from statsmodels.stats.multitest import multipletests
@@ -23,7 +24,26 @@ import matplotlib.pyplot as plt
 
 # variables : so that you would not search inside the program to hunt for specific variables if you want to change them.
 
-data_main = multiplex_11_stat
+# your dataframe should not have NaN ( missing values ) under the 'value' column.
+    # 100 % God.
+    # otherwise you may receive the following errors :
+        # Model did not converge for metric Creatinin_serum: index 145 is out of bounds for axis 0 with size 145
+        # Model did not converge for metric Total_protein_serum: index 140 is out of bounds for axis 0 with size 140
+        # Model did not converge for metric CRP_serum: index 145 is out of bounds for axis 0 with size 145
+        # Model did not converge for metric ucr: index 145 is out of bounds for axis 0 with size 145.
+# another potential probelm : the categories in your dataframe should be ordered.
+    # ordering may disappear after long-to-wide & reverse operations.
+    # so check this !
+
+data_main = df_serum_chem_ucr_value_on_clean_ro
+
+
+# df_serum_chem_ucr_value_on_clean   # with outliers
+# df_serum_chem_ucr_value_on_clean_ro   # # without outliers
+
+# test_df
+# df_serum_chem_ucr_value_on
+# multiplex_11_stat
 # df_rd_3
 # df_hist_7_cat  # the nae of the 'cat' column was changed to 'time' to make it compatible with this program
                         # =>  db_histology.py
@@ -35,7 +55,7 @@ data_main = multiplex_11_stat
 
 # Set the outcome variable here:
 # Choose between : "value" , "value_bc" , 'value_yjt', 'value_bc_yjt'
-outcome_variable = "value_yjt"   
+outcome_variable = "value"   
 
 # %%%'
 
@@ -58,19 +78,19 @@ time_points = [ 'HMGB1+_%' , 'NGAL+_%' , 'Casp3+_%' , 'Zo-1+_%' , 'Syndecan+_%' 
 
 # %%%'
 
-# reference time is the first item in te ordered time category.
-reference_time = 'HMGB1+_%'
+# reference time is the first item in the ordered time category.
+reference_time = "Explantation"
+# 'HMGB1+_%'
 # "TI"
 # "Explantation"
 
 # Define the folder for saving Q-Q plots
-qq_plot_folder = r"U:\kidney\histology\multiplex\plot\q_q"
+qq_plot_folder = r"F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\qq"
 if not os.path.exists(qq_plot_folder):
     os.makedirs(qq_plot_folder)
 
 # %%'
 # %%'
-
 
 
 '''
@@ -258,7 +278,7 @@ final_results_df.shape
 # %%'
 
 # final_results_df.to_csv( r'U:\kidney\histology\result\histology_value_yjt.csv' , index=False)
-final_results_df.to_excel( r'U:\kidney\histology\multiplex\result\multiplex_value_yjt.xlsx' , index=False)
+final_results_df.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\serum_ucr_value_without outlier.xlsx' , index=False)
 
 # %%'
 # %%'
@@ -287,6 +307,16 @@ final_results_df.to_excel( r'U:\kidney\histology\multiplex\result\multiplex_valu
 
         bc data : LDH :
             Model did not converge for metric LDH_serum: index 137 is out of bounds for axis 0 with size 137
+
+        
+        not ran : import statsmodels.formula.api as smf
+            Model did not converge for metric Urea_serum: name 'smf' is not defined
+            Model did not converge for metric Creatinin_serum: name 'smf' is not defined
+            Model did not converge for metric Total_protein_serum: name 'smf' is not defined
+            Model did not converge for metric CRP_serum: name 'smf' is not defined
+            Model did not converge for metric ucr: name 'smf' is not defined
+            
+            ValueError: No objects to concatenate
 
 '''
 

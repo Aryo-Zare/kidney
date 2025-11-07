@@ -1,12 +1,28 @@
 
-df_rd_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\df_rd_3.pkl' )
+# df_rd_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\df_rd_3.pkl' )
+
+# %%
+
+# df_rd_3['treatment'] = (
+#                         df_rd_3['treatment']
+#                         .replace({'DBD-Ecosol': 'DBD-Omnisol'})
+# )
+
+# df_rd_4 = df_rd_3.copy()
+
+# %%
+
+# df_rd_4.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\df_rd_4.pkl' )
+
+df_rd_4 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\df_rd_4.pkl' )
+
 
 # %%'
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
                     "DBD-HTK": "green", 
-                    "DBD-Ecosol": "blue", 
+                    "DBD-Omnisol": "blue", 
                     "NMP": "red" 
 }
 
@@ -24,7 +40,7 @@ custom_palette = {
     # this should only be an option.
     # setting : share-x = True : would cancel specific x-ticks determination for individual subplots !!
 g = sns.FacetGrid( 
-                    df_rd_3 , 
+                    df_rd_4 , 
                     col="metric",  # columns : subplots.
                     col_wrap=2, 
                     sharex=False , 
@@ -227,9 +243,9 @@ plt.tight_layout( rect=[0, 0, 0.85 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_2.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_2.svg' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_2.eps' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_3.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_3.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\urine\rd\plot\rd_manuscript_3.eps' )
 
 # %%'
 
