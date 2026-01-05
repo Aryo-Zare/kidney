@@ -90,7 +90,7 @@ if not os.path.exists(qq_plot_folder):
     os.makedirs(qq_plot_folder)
 
 # %%'
-# %%'
+# %%' helpter functions
 
 
 '''
@@ -115,6 +115,9 @@ def get_param_index(param_name, params_list):
         return None
 
 
+# autoomatically calculated :
+    # HTK vs Ecosol 
+    # HTK vs NMP
 def build_contrast_vs_baseline(time_point, treatment, params_list, result):
     """
         Build a contrast vector for the specified treatment relative to the reference (DBD-HTK).
@@ -140,6 +143,8 @@ def build_contrast_vs_baseline(time_point, treatment, params_list, result):
     return contrast
 
 
+# Ecosol versus NMP 
+    # the 2 non-base-line ( DBD-HTK ) treatments.
 def build_contrast_Ecosol_vs_NMP(time_point, params_list, result):
     """
         Compute the contrast for DBD-Ecosol vs NMP when DBD-HTK is the reference.
@@ -152,6 +157,10 @@ def build_contrast_Ecosol_vs_NMP(time_point, params_list, result):
     if contrast_Ecosol is None or contrast_NMP is None:
         return None
     return contrast_Ecosol - contrast_NMP
+
+
+# %%
+
 
 # --- Main Processing for All Metrics ---
 results_all = []
