@@ -202,10 +202,18 @@ g = sns.FacetGrid(
         # Inside the function, you want to know which metric this facet corresponds to.
         # Since all rows in <data> ( subset selected by g.map_dataframe later ) have the same metric value, you can just look at the first row.
 def plot_with_order(data, **kwargs):
-    if data['metric'].iloc[0] in metrics_df1:
+    metric = data['metric'].iloc[0]
+
+    if metric in metrics_df1:
         order = time_order_df1
+
+    elif metric == "release":
+        # Explicitly remove TI for release
+        order = [t for t in time_order_df2 if t != "TI"]
+
     else:
         order = time_order_df2
+        
     sns.pointplot( 
                     data=data ,
                     x='time' , 
@@ -230,7 +238,7 @@ def plot_with_order(data, **kwargs):
     # “For each facet, call : 
         # plot_with_order( data=subset, **kwargs )  
         # where subset is the dataframe slice for that facet.”
-g.map_dataframe(plot_with_order)
+g.map_dataframe( plot_with_order )
 
 
 '''

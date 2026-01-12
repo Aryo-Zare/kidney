@@ -318,4 +318,19 @@ plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__
 
 # %%'
 
+# %% mean
+
+# incorrect for multiplex : mean : 
+    # reason : unlike the conventional histology, where all metrics had the same range ( 0-6 ), \
+    # multiplex study has different ranges for differnet metrics.
+    # hence, one sample with a big sizze on a metric with big ranges, will corrupt the whole mean !!
+
+multiplex_13.groupby('treatment', as_index=False)['cnp'].mean()
+    #      treatment      cnp
+    # 0      SCS-HTK 1.953287
+    # 1  SCS-Omnisol 0.673771
+    # 2  NMP-Omnisol 0.914337
+
+# %%
+
 

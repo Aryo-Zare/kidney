@@ -154,6 +154,33 @@ bw_2['sample_ID'].unique()
     #        'ZC14', 'ZC15', 'ZC23', 'ZC35', 'ZC37', 'ZC38', 'ZC61', 'ZC63',
     #        'ZC66', 'ZC67', 'ZC68', 'ZC69'], dtype=object)
 
+
+bw_2[:4]
+    # Out[33]: 
+    #   sample_ID   treatment group     bw_ex
+    # 0      ZC04     DBD-HTK     1        39
+    # 1      ZC05  DBD-Ecosol     2 36.500000
+    # 3      ZC07  DBD-Ecosol     2        36
+    # 4      ZC08     DBD-HTK     1 34.400000
+
+# %%
+
+bw_4 = bw_2.copy()
+
+rename_dict = {
+                'DBD-HTK': 'SCS-HTK' ,
+                'DBD-Ecosol' : 'SCS-Omnisol' ,
+                'NMP' : 'NMP-Omnisol'
+}
+
+
+bw_4['treatment'].replace( to_replace=rename_dict , inplace=True )
+
+
+# %%
+
+bw_4.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\bw_4.pkl' )
+
 # %%
 
 g = sns.catplot(

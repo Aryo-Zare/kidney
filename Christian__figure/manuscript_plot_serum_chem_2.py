@@ -58,8 +58,9 @@ import string
 # contains 'ucr'.
 
 
-# with outliers
-df_serum_chem_ucr_value_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\df_serum_chem_ucr_value_3.pkl' )
+# # with outliers
+# df_serum_chem_ucr_value_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\df_serum_chem_ucr_value_3.pkl' )
+
 # without outliers
 df_serum_chem_ucr_value_3_ro = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\df_serum_chem_ucr_value_3_ro.pkl' )
 

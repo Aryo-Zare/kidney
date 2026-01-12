@@ -1,7 +1,7 @@
 
 # df_hist_7 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_7.pkl' )
 
-# %%
+# %%'
 
 # df_hist_7[:4]
 #     # Out[91]: 
@@ -11,7 +11,7 @@
 #     # 2      ZC04   DBD-HTK     1  histology  cat_3 2.000000   0.665919
 #     # 3      ZC04   DBD-HTK     1  histology  cat_4 1.000000   0.499618
 
-# %%
+# %%'
 
 
 # # Define the correct order of pathological categories
@@ -24,7 +24,7 @@
 #                                             ordered=True 
 # )
 
-# %%
+# %%'
 
 # df_hist_7['treatment'] = (
 #                             df_hist_7['treatment']
@@ -33,13 +33,13 @@
 
 # df_hist_8 = df_hist_7.copy()
 
-# %%
+# %%'
 
 # df_hist_8.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_8.pkl' )
 
 # df_hist_8 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_8.pkl' )
 
-# %%
+# %%'
 
 # rename_dict = {
 #                 'DBD-HTK': 'SCS-HTK' ,
@@ -50,7 +50,7 @@
 
 # df_hist_8['treatment'].replace( to_replace=rename_dict , inplace=True )
 
-# %%
+# %%'
 
 # df_hist_9 = df_hist_8.copy()
 
@@ -59,8 +59,7 @@
 df_hist_9 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_9.pkl' )
 
 
-
-# %%
+# %%'
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
@@ -70,12 +69,12 @@ custom_palette = {
 }
 
 
-# %%
+# %%'
 
 # this can not be called as sns.FacetGrid opens its own new window !!
 # fig = plt.figure( figsize=(16,12) , constrained_layout=True)
 
-# %%
+# %%'
 
                         # yet, there will be no legend at the side of the plot.
 
@@ -102,7 +101,7 @@ g = sns.catplot(
                 aspect=0.6,
 )
 
-# %% overlay point
+# %%' overlay point
 
 # overlaying this on the previous strip-plot.
 
@@ -130,7 +129,7 @@ g.map_dataframe(
 )
 
 
-# %%
+# %%'
 
 # # g
 # g.map_dataframe(
@@ -151,7 +150,7 @@ g.map_dataframe(
 # # whis : If scalar, whiskers are drawn to the farthest datapoint within whis * IQR from the nearest hinge.
 # # dictionaries for customization : https://matplotlib.org/stable/gallery/statistics/boxplot.html#sphx-glr-gallery-statistics-boxplot-py
 
-# %%
+# %%'
 
 # drop all x-ticks (positions & labels)
 g.set( xticks=[] )
@@ -159,7 +158,7 @@ g.set( ylim=( 0.8 , 6.2 ) )  # standardize y-lim in all subplots !
 
 # x axes do nbot have any labels !
 
-# %% y-axis label
+# %%' y-axis label
 
 # put the y-label of the left side subplots.
         # by using a loop over axes, all axes will get the y axis label : not what you want.
@@ -179,7 +178,7 @@ axes = g.axes.flatten()
 axes[0].set_ylabel("score", loc="top" , rotation=90 )
 axes[3].set_ylabel("score", loc="top" , rotation=90 )
 
-# %%
+# %%'
 
 # as this rewrites the tiles :
     # first check the plot without running this cell to make sure each plot corresponds to your desired order-title.
@@ -200,7 +199,7 @@ for ax , i in zip( g.axes.flat , new_titles ):
 
 
 
-# %%
+# %%'
 
 # Add a legend to clearly indicate which color corresponds to which group.
 
@@ -212,7 +211,7 @@ g._legend.set_title("" )
 # for text in g._legend.texts:
 #     text.set_fontsize(20)  # Adjust as needed
 
-# %% add subplot indexing letters
+# %%' add subplot indexing letters
 
 # add subplot indexing letters.
 
@@ -243,25 +242,25 @@ for ax , letter in zip( g.axes.flatten() , letters ):
             # (1, 1) = top‑right corner of the subplot’s axes
         # Values can go slightly outside that range (e.g. -0.1, 1.05) to nudge text just beyond the axes.
 
-# %%
+# %%'
 
 # plt.suptitle( 'Kidney Histopatholgy'    
 #              , x=0.4 
 #              , fontsize=24 )
 #  \n mean_sd   #  for pointplot
 
-# %%
+# %%'
 
 # rect : to avoid overlapping of the legend on the figure.
 plt.tight_layout( rect=[0, 0, 0.77 , 1] )
 
-# %%
+# %%'
 
 # C:\Users\azare\AppData\Local\miniconda3\envs\env_1\Lib\site-packages\seaborn\axisgrid.py:854: FutureWarning: 
 # Setting a gradient palette using color= is deprecated and will be removed in v0.14.0. Set `palette='dark:#4c72b0'` for the same effect.
 #   func(*plot_args, **plot_kwargs)
 
-# %%
+# %%'
 
 # bc : baseline corrected
 
@@ -269,5 +268,143 @@ plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__
 plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\histopatholoy.svg' )
 
 
-# %%
-# %%
+# %%'
+# %%' APACHE _ GCS
+
+
+
+# %%'
+
+# Check how many rows contribute per treatment
+    # each sample contributes to multiple rows ( multiple histology metrics ( subplots ! ) ).
+df_hist_9.groupby('treatment').size()
+    # treatment
+    # SCS-HTK        42
+    # SCS-Omnisol    35
+    # NMP-Omnisol    30
+    # dtype: int64
+
+
+# %%'
+
+df_hist_9.groupby(['treatment', 'sample_ID'])['value'].sum()
+    # treatment    sample_ID
+    # SCS-HTK      ZC04        10.000000
+    #              ZC05         0.000000
+    #              ZC07         0.000000
+    #              ZC08        18.000000
+    #              ZC09         0.000000
+    #              ZC10         7.500000
+    #              ZC11         0.000000
+    #              ZC14         0.000000
+    #              ZC15         0.000000
+    #              ZC23         6.000000
+    #              ZC35        11.500000
+    #              ZC37         9.000000
+    #              ZC38        14.000000
+    #              ZC61         0.000000
+    #              ZC63         0.000000
+    #              ZC66         0.000000
+    #              ZC67         0.000000
+    #              ZC68         0.000000
+    # SCS-Omnisol  ZC04         0.000000
+    #              ZC05        12.500000
+    #              ZC07        12.500000
+    #              ZC08         0.000000
+    #              ZC09        13.500000
+    #              ZC10         0.000000
+    #              ZC11        12.500000
+    #              ZC14        16.000000
+    #              ZC15         9.000000
+    #              ZC23         0.000000
+    #              ZC35         0.000000
+    #              ZC37         0.000000
+    #              ZC38         0.000000
+    #              ZC61         0.000000
+    #              ZC63         0.000000
+    #              ZC66         0.000000
+    #              ZC67         0.000000
+    #              ZC68         0.000000
+    # NMP-Omnisol  ZC04         0.000000
+    #              ZC05         0.000000
+    #              ZC07         0.000000
+    #              ZC08         0.000000
+    #              ZC09         0.000000
+    #              ZC10         0.000000
+    #              ZC11         0.000000
+    #              ZC14         0.000000
+    #              ZC15         0.000000
+    #              ZC23         0.000000
+    #              ZC35         0.000000
+    #              ZC37         0.000000
+    #              ZC38         0.000000
+    #              ZC61         8.000000
+    #              ZC63        11.000000
+    #              ZC66        10.000000
+    #              ZC67        11.000000
+    #              ZC68         6.500000
+    # Name: value, dtype: float64
+
+
+# %%' mean of means
+
+# mean of means
+# mean of means of each category ( subplot )( edema , lymphocyte infirltration , ...  ).
+# AI_stat _ cell-444.
+# tc : time - cat
+
+
+# calculating the sum of individual samples is not correct, as the number of samples differ :
+        # a higher sum in a traatment may merely be a consequence of higher sample number.
+        # mean should be calculated !
+
+
+df_mean_tc = (
+    df_hist_9
+    .groupby(['treatment', 'cat'], as_index=False)['value']
+    .mean()
+)
+
+
+
+df_mean_tc
+    #       treatment    cat    value
+    # 0       SCS-HTK  cat_2 1.785714
+    # 1       SCS-HTK  cat_1 2.357143
+    # 2       SCS-HTK  cat_3 2.357143
+    # 3       SCS-HTK  cat_4 1.571429
+    # 4       SCS-HTK  cat_6 1.428571
+    # 5       SCS-HTK  cat_5 1.357143
+    # 6   SCS-Omnisol  cat_2 1.900000
+    # 7   SCS-Omnisol  cat_1 2.416667
+    # 8   SCS-Omnisol  cat_3 2.583333
+    # 9   SCS-Omnisol  cat_4 2.916667
+    # 10  SCS-Omnisol  cat_6 1.500000
+    # 11  SCS-Omnisol  cat_5 1.666667
+    # 12  NMP-Omnisol  cat_2 1.900000
+    # 13  NMP-Omnisol  cat_1 1.800000
+    # 14  NMP-Omnisol  cat_3 1.800000
+    # 15  NMP-Omnisol  cat_4 1.800000
+    # 16  NMP-Omnisol  cat_6 1.000000
+    # 17  NMP-Omnisol  cat_5 1.000000
+
+# %%'
+
+df_mean_of_means = (
+    df_mean_tc
+    .groupby('treatment', as_index=False)['value']
+    .mean()
+)
+
+
+
+df_mean_of_means
+    # Out[16]: 
+    #      treatment    value
+    # 0      SCS-HTK 1.809524
+    # 1  SCS-Omnisol 2.163889
+    # 2  NMP-Omnisol 1.550000
+
+# %%'
+
+
