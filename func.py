@@ -64,28 +64,32 @@ from sklearn.preprocessing import PowerTransformer
 
 # %%'
 
-# yjt : add a new column to the dataframe based on Yeo_Johnson transformation of an existing column.
-# source_column : the column to be transformed
-# new_column : the trasformations shall be writen in this new column : 
-    # give it a name.
-    # or if not : it will autmatically be named by the convention below.
+# wrong !
+    # each 'metric''s transformation must be done separately.
+    # => C:\code\kidney\retest.py
 
-def yjt( df=None , source_column=None , new_column=None ):
-    """
-    Applies the Yeo-Johnson transformation to the given column and adds it to the dataframe.
-    If new_column is not provided, it appends '_yjt' to the original column name.
-    """
-    if new_column is None :  # if the user did not define the new column's name.
-        new_column = source_column + '_yjt'
+# # yjt : add a new column to the dataframe based on Yeo_Johnson transformation of an existing column.
+# # source_column : the column to be transformed
+# # new_column : the trasformations shall be writen in this new column : 
+#     # give it a name.
+#     # or if not : it will autmatically be named by the convention below.
+
+# def yjt( df=None , source_column=None , new_column=None ):
+#     """
+#     Applies the Yeo-Johnson transformation to the given column and adds it to the dataframe.
+#     If new_column is not provided, it appends '_yjt' to the original column name.
+#     """
+#     if new_column is None :  # if the user did not define the new column's name.
+#         new_column = source_column + '_yjt'
         
-    # standardize=False : output : log‐like but not centered at zero or unit variance
-        # easier interpretation of results ?
-    pt = PowerTransformer(method='yeo-johnson', standardize=False)
-    # Transform the source_column (reshaped as a 2D array [ dataframe, in contrast to a series ][ by double brackets ] )
-    transformed = pt.fit_transform(df[[source_column]])
-    # .flatten : convert the dataframe back to a series.
-    df[new_column] = transformed.flatten() 
-    return df
+#     # standardize=False : output : log‐like but not centered at zero or unit variance
+#         # easier interpretation of results ?
+#     pt = PowerTransformer(method='yeo-johnson', standardize=False)
+#     # Transform the source_column (reshaped as a 2D array [ dataframe, in contrast to a series ][ by double brackets ] )
+#     transformed = pt.fit_transform(df[[source_column]])
+#     # .flatten : convert the dataframe back to a series.
+#     df[new_column] = transformed.flatten() 
+#     return df
 
 # %%'
 

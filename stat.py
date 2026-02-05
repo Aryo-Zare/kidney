@@ -2,7 +2,11 @@
 
 # %%'
 
-
+'''
+    this program evaluates the statistical significance for :
+        between 'treatment' groups.
+        not between 'time' points !
+'''
 
 
 # %%'
@@ -19,8 +23,8 @@ from statsmodels.stats.multitest import multipletests
 import matplotlib.pyplot as plt
 %matplotlib qt
 
-# %%
-# %%' variables
+# %%'
+# %% variables
 
 # variables : so that you would not search inside the program to hunt for specific variables if you want to change them.
 
@@ -35,8 +39,10 @@ import matplotlib.pyplot as plt
     # ordering may disappear after long-to-wide & reverse operations.
     # so check this !
 
-data_main = df_serum_chem_ucr_value_on_clean_ro
+data_main = df
 
+
+# df_urine_all = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\df_urine_all.pkl' )
 
 # df_serum_chem_ucr_value_on_clean   # with outliers
 # df_serum_chem_ucr_value_on_clean_ro   # # without outliers
@@ -55,7 +61,7 @@ data_main = df_serum_chem_ucr_value_on_clean_ro
 
 # Set the outcome variable here:
 # Choose between : "value" , "value_bc" , 'value_yjt', 'value_bc_yjt'
-outcome_variable = "value"   
+outcome_variable = "value_yjt"   
 
 # %%%'
 
@@ -85,7 +91,7 @@ reference_time = "Explantation"
 # "Explantation"
 
 # Define the folder for saving Q-Q plots
-qq_plot_folder = r"F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\qq"
+qq_plot_folder = r"F:\OneDrive - Uniklinik RWTH Aachen\kidney\re-test\qq\yjt_bg"
 if not os.path.exists(qq_plot_folder):
     os.makedirs(qq_plot_folder)
 
@@ -159,7 +165,7 @@ def build_contrast_Ecosol_vs_NMP(time_point, params_list, result):
     return contrast_Ecosol - contrast_NMP
 
 
-# %%
+# %% loop
 
 
 # --- Main Processing for All Metrics ---
@@ -287,7 +293,7 @@ final_results_df.shape
 # %%'
 
 # final_results_df.to_csv( r'U:\kidney\histology\result\histology_value_yjt.csv' , index=False)
-final_results_df.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ucr\serum_ucr_value_without outlier.xlsx' , index=False)
+final_results_df.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\re-test\bg_yjt.xlsx' , index=False)
 
 # %%'
 # %%'
