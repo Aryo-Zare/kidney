@@ -101,7 +101,7 @@ multiplex_2.columns
     #       dtype='object')
 
 
-# %% drop bank columns
+# %% drop blank columns
 
 # there are some blank columns in the dataframe.
     # these columns also have no column name.
@@ -142,7 +142,8 @@ multiplex_3.columns
 # %% drop un-necessary rows.
 
 # drop irrelevanty rows.
-
+# note : the first row in the excel sheet ( zc-n ... ) is already automatically assigned as a column here.
+    # so it's not row-0 : it has no row index ; it's a column.
 multiplex_4 = multiplex_3.drop( index=[1,2,3,4] )
 
 multiplex_4.iloc[ : , :2 ]

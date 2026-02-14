@@ -78,7 +78,7 @@ multiplex_10 = multiplex_9.copy()
 multiplex_10['sample_ID'] = (
                                 multiplex_10['sample_ID']
                                   .str.upper()                    # make everything uppercase
-                                  .replace( r'\..*$' , '' , regex=True )  # drop dot-suffix and everything after
+                                  .replace( r'\..*$' , '' , regex=True )  # drop dot-suffix and everything after.
 )
 
 # %%
@@ -102,7 +102,7 @@ multiplex_10.to_pickle( r'U:\kidney\histology\multiplex\multiplex_10.pkl' )
 
 # filter based on treatment, sample_ID & time.
 
-# 'ZC6' is ony converted to 'ZC06'.
+# 'ZC6' is only converted to 'ZC06'.
 mask = \
         ( multiplex_10["treatment"].isin(["DBD-HTK", "DBD-Ecosol", "NMP"]) ) & \
         ( ~multiplex_10["sample_ID"].isin([ "ZC06", "ZC28" , 'ZC27' , 'ZC60' , 'ZC62' , 'ZC64' , 'ZC65' ]) ) 
