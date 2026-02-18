@@ -293,7 +293,7 @@ final_results_df.shape
 # %%'
 
 # final_results_df.to_csv( r'U:\kidney\histology\result\histology_value_yjt.csv' , index=False)
-final_results_df.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\re-test\bg_yjt.xlsx' , index=False)
+final_results_df.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\re-test\bg_yjt.xlsx' , index=False )
 
 # %%'
 # %%'
