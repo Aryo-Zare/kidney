@@ -1668,6 +1668,8 @@ from sklearn.preprocessing import StandardScaler
 
 # %%%'
 
+
+# z_score !
 X_scaled = StandardScaler().fit_transform(X)
 
 pca = PCA(n_components=2)
@@ -1863,7 +1865,7 @@ g = sns.clustermap(
                     # ← increase height & width substantially
                     # otherwise all of the row & olumn names will not be shown.
                     figsize=(25, 18),   
-                    z_score=0 ,
+                    z_score=0 ,  # : axis = 0  :  •	Z score per column (pattern) !
                     
                     # dendrogram_ratio=(0.15, 0.15), 
                     # colors_ratio=0.05 # ← makes the color bar thicker
@@ -1935,6 +1937,11 @@ plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\co
 plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\combined\plot\heatmap_7.svg' )
 
 # %%'
+
+# C:\code\kidney\histology\multiplex\extract_multiplex.py
+multiplex_7 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_7.pkl' )
+
+# %%
 
 
 

@@ -278,6 +278,8 @@ for biom in biomarkers :
 # %%
 
 multiplex_6.to_pickle( r'U:\kidney\histology\multiplex\multiplex_6.pkl' )
+multiplex_6 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_6.pkl' )
+
 
 # %% *
 
@@ -310,7 +312,7 @@ multiplex_6[[ *biomarkers , *biomarkers_percentage ]].head()
 # without unpacking ( without pitting the star before the list ), I get the following error :
     # KeyError: "None of [Index([('HMGB1+', 'NGAL+', 'Casp3+', 'Zo-1+', 'Syndecan+')], dtype='object')] are in the [columns]"
 
-# %%
+# %% multiplex_7
 
 # build the list of columns you want
 selected_cols = ['sample_ID', 'treatment'] + biomarkers_percentage
@@ -331,6 +333,61 @@ multiplex_7.head()
     # 4      ZC51  DBD-Ecoflow 1.276158 3.014129 0.063466 0.000408    0.000612
 
 # %%
+
+multiplex_7.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_7.pkl' )
+
+# %%
+
+corr = multiplex_7[ biomarkers_percentage ].corr(method="spearman")
+
+corr
+    # Out[21]: 
+    #              HMGB1+_%   NGAL+_%  Casp3+_%   Zo-1+_%  Syndecan+_%
+    # HMGB1+_%     1.000000  0.139033  0.177729 -0.083225    -0.027873
+    # NGAL+_%      0.139033  1.000000 -0.067993 -0.147135     0.101770
+    # Casp3+_%     0.177729 -0.067993  1.000000  0.202554     0.235042
+    # Zo-1+_%     -0.083225 -0.147135  0.202554  1.000000     0.121411
+    # Syndecan+_% -0.027873  0.101770  0.235042  0.121411     1.000000
+
+# %%
+
+from scipy.stats import spearmanr
+
+# %%
+
+# biomarkers_percentage  : your list of marker columns
+data = multiplex_7[ biomarkers_percentage ]
+
+# %% correlation
+
+# Initialize matrices
+corr = pd.DataFrame(index=biomarkers_percentage, columns=biomarkers_percentage, dtype=float)
+pval = pd.DataFrame(index=biomarkers_percentage, columns=biomarkers_percentage, dtype=float)
+
+corr.shape
+    # Out[25]: (5, 5)
+
+corr
+    # Out[26]: 
+    #              HMGB1+_%  NGAL+_%  Casp3+_%  Zo-1+_%  Syndecan+_%
+    # HMGB1+_%          NaN      NaN       NaN      NaN          NaN
+    # NGAL+_%           NaN      NaN       NaN      NaN          NaN
+    # Casp3+_%          NaN      NaN       NaN      NaN          NaN
+    # Zo-1+_%           NaN      NaN       NaN      NaN          NaN
+    # Syndecan+_%       NaN      NaN       NaN      NaN          NaN
+
+# %%
+
+# Compute pairwise Spearman correlations
+for i in biomarkers_percentage:
+    for j in biomarkers_percentage:
+        rho, p = spearmanr(data[i], data[j], nan_policy="omit")
+        corr.loc[i, j] = rho
+        pval.loc[i, j] = p
+
+
+
+# %% melt
 
 multiplex_8 = pd.melt(
                         multiplex_7 ,
