@@ -941,9 +941,28 @@ mask = \
         ( combined_pct_5["treatment"].isin(["DBD-HTK", "DBD-Ecosol", "NMP"]) ) & \
         ( ~combined_pct_5["sample_ID"].isin([ "ZC06", "ZC28" , 'ZC27' , 'ZC60' , 'ZC62' , 'ZC64' , 'ZC65' ]) ) 
 
-
 # Sample DataFrame (assuming df_serum_chem_5_bc is already loaded)
 combined_pct_6 = combined_pct_5[ mask ]
+
+# %% explore-review mask
+
+# explore-review : mask :
+        # mask here is a row mask !
+
+combined_pct_5.shape
+    # Out[46]: (3591, 4)
+mask.shape
+    # Out[43]: (3591,)
+mask[:5]
+    # Out[45]: 
+    # 0    False
+    # 1    False
+    # 2    False
+    # 3    False
+    # 4    False
+    # dtype: bool
+type(mask)
+    # Out[48]: pandas.Series
 
 # %%'
 
@@ -1939,9 +1958,9 @@ plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\co
 # %%'
 
 # C:\code\kidney\histology\multiplex\extract_multiplex.py
-multiplex_7 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_7.pkl' )
+# multiplex_7 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_7.pkl' )
 
-# %%
+# %%'
 
 
 

@@ -158,7 +158,7 @@ multiplex_4.iloc[ : , :2 ]
     # 10      Zo-1+         1224
     # 11  Syndecan+         1045
 
-# %%' transpose
+# %% transpose
 
 
 # transpose
@@ -263,7 +263,7 @@ multiplex_6.to_pickle( r'U:\kidney\histology\multiplex\multiplex_6.pkl' )
 multiplex_6['cell_count'].min()
     # Out[52]: 26883
 
-# %% %
+# %%%'
 
 # calculating the percentage of the number of cells containing each specific biomarker.
 
@@ -275,7 +275,7 @@ for biom in biomarkers :
     pct_col = f"{biom}_%"             # percentage column : e.g. "HMGB1+_%"
     multiplex_6[pct_col] = ( multiplex_6[biom] / multiplex_6['cell_count'] ) * 100
 
-# %%
+# %%'
 
 multiplex_6.to_pickle( r'U:\kidney\histology\multiplex\multiplex_6.pkl' )
 multiplex_6 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_6.pkl' )
@@ -291,7 +291,7 @@ biomarkers_percentage = [ f"{b}_%" for b in biomarkers ]
 biomarkers_percentage
     # Out[66]: ['HMGB1+_%', 'NGAL+_%', 'Casp3+_%', 'Zo-1+_%', 'Syndecan+_%']
 
-# %%
+# %%'
 
 # peek at the new columns
 multiplex_6[[ *biomarkers , *biomarkers_percentage ]].head()
@@ -332,12 +332,20 @@ multiplex_7.head()
     # 3      ZC50  DBD-Ecoflow 0.058404 0.073267 0.025665 0.001625    0.258611
     # 4      ZC51  DBD-Ecoflow 1.276158 3.014129 0.063466 0.000408    0.000612
 
-# %%
+# %%'
 
 multiplex_7.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_7.pkl' )
 
-# %%
+multiplex_7 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\multiplex_7.pkl' )
 
+
+# %% correlation
+
+# this calculates the correlaion between individual biomarkers.
+    # irrespective of groupings.
+
+# via pandas
+    # no p-value !
 corr = multiplex_7[ biomarkers_percentage ].corr(method="spearman")
 
 corr
@@ -349,16 +357,48 @@ corr
     # Zo-1+_%     -0.083225 -0.147135  0.202554  1.000000     0.121411
     # Syndecan+_% -0.027873  0.101770  0.235042  0.121411     1.000000
 
-# %%
+
+corr.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\corr.pkl' )
+corr.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\correlation\correlation_individual_biomarkers.xlsx' )
+
+
+# %%%'
 
 from scipy.stats import spearmanr
 
-# %%
+# %%%'
 
+
+multiplex_7.dtypes
+    # Out[20]: 
+    # sample_ID      object
+    # treatment      object
+    # HMGB1+_%       object
+    # NGAL+_%        object
+    # Casp3+_%       object
+    # Zo-1+_%        object
+    # Syndecan+_%    object
+    # dtype: object
+
+# the object-type is a problem for using spearmanr !
 # biomarkers_percentage  : your list of marker columns
-data = multiplex_7[ biomarkers_percentage ]
+data = multiplex_7[biomarkers_percentage].apply(
+    pd.to_numeric, errors="coerce"
+)
 
-# %% correlation
+
+data.dtypes
+    # Out[22]: 
+    # HMGB1+_%       float64
+    # NGAL+_%        float64
+    # Casp3+_%       float64
+    # Zo-1+_%        float64
+    # Syndecan+_%    float64
+    # dtype: object
+
+# %%%'
+
+# extracting the p-values.
 
 # Initialize matrices
 corr = pd.DataFrame(index=biomarkers_percentage, columns=biomarkers_percentage, dtype=float)
@@ -376,7 +416,7 @@ corr
     # Zo-1+_%           NaN      NaN       NaN      NaN          NaN
     # Syndecan+_%       NaN      NaN       NaN      NaN          NaN
 
-# %%
+# %%%' 
 
 # Compute pairwise Spearman correlations
 for i in biomarkers_percentage:
@@ -385,6 +425,178 @@ for i in biomarkers_percentage:
         corr.loc[i, j] = rho
         pval.loc[i, j] = p
 
+# %%%'
+
+corr
+    # Out[25]: 
+    #              HMGB1+_%   NGAL+_%  Casp3+_%   Zo-1+_%  Syndecan+_%
+    # HMGB1+_%     1.000000  0.139033  0.177729 -0.083225    -0.027873
+    # NGAL+_%      0.139033  1.000000 -0.067993 -0.147135     0.101770
+    # Casp3+_%     0.177729 -0.067993  1.000000  0.202554     0.235042
+    # Zo-1+_%     -0.083225 -0.147135  0.202554  1.000000     0.121411
+    # Syndecan+_% -0.027873  0.101770  0.235042  0.121411     1.000000
+
+
+# un-corrected p-values.
+pval
+    # Out[26]: 
+    #              HMGB1+_%  NGAL+_%  Casp3+_%  Zo-1+_%  Syndecan+_%
+    # HMGB1+_%     1.000000 0.302334  0.185951 0.538234     0.836935
+    # NGAL+_%      0.302334 1.000000  0.615283 0.274748     0.451281
+    # Casp3+_%     0.185951 0.615283  1.000000 0.130768     0.078414
+    # Zo-1+_%      0.538234 0.274748  0.130768 1.000000     0.368303
+    # Syndecan+_%  0.836935 0.451281  0.078414 0.368303     0.000000
+
+# %%%'
+
+pval.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\correlation\pvalues_uncorrected.xlsx' )
+
+
+# %%%'
+
+# all these could have been possibly much better have been implemented in pinguin :
+    # C:\code\composition\matrix.py
+    # however, in the latter, correction for multiple test wre seemingly not done.
+
+from statsmodels.stats.multitest import multipletests
+
+# Flatten upper triangle (excluding diagonal)
+# select the upper triangle :
+# note : unlike the previous makss that I used to select particular rows from a dataframe, 
+    # here, the mask is not a row-mask !
+    # it's an array-mask ! : 2 dimensional.
+    # its a numpy array, unlike the conventional masks tat I used before that were pandas-series.
+    # to review the conventional masks  =  C:\code\kidney\histology\multiplex\combination\combination.py  |  explore-review mask.
+mask = np.triu(np.ones(pval.shape), k=1).astype(bool)
+mask
+    # Out[29]: 
+    # array([[False,  True,  True,  True,  True],
+    #        [False, False,  True,  True,  True],
+    #        [False, False, False,  True,  True],
+    #        [False, False, False, False,  True],
+    #        [False, False, False, False, False]])
+
+# extract only the selected items.
+pvals_flat = pval.values[mask]
+pvals_flat
+    # Out[31]: 
+    # array([0.30233434, 0.1859506 , 0.53823384, 0.83693474, 0.6152826 ,
+    #        0.27474848, 0.45128143, 0.13076814, 0.07841368, 0.36830332])
+
+_ , pvals_fdr, _ , _ = multipletests(pvals_flat, method="fdr_bh")
+
+pvals_fdr
+    # Out[33]: 
+    # array([0.60466868, 0.60466868, 0.67279231, 0.83693474, 0.68364733,
+    #        0.60466868, 0.64468775, 0.60466868, 0.60466868, 0.61383887])
+
+# Putting the corrected values back into matrix ( panddas dataframe ) structure
+# for the following array-mask-assignment , you can not take a pandas dataframe directly !
+        # ValueError: assignment destination is read-only
+    # you should 1st convert it to a numpy array !
+    # .copy() : you should do this , otherwise the array is not writable ! & you will get the same error :
+        # ValueError: assignment destination is read-only
+pval_fdr_np_array = pval.to_numpy().copy()
+pval_fdr_np_array
+    # Out[53]: 
+    # array([[1.        , 0.30233434, 0.1859506 , 0.53823384, 0.83693474],
+    #        [0.30233434, 1.        , 0.6152826 , 0.27474848, 0.45128143],
+    #        [0.1859506 , 0.6152826 , 1.        , 0.13076814, 0.07841368],
+    #        [0.53823384, 0.27474848, 0.13076814, 1.        , 0.36830332],
+    #        [0.83693474, 0.45128143, 0.07841368, 0.36830332, 0.        ]])
+
+pval_fdr_np_array[mask] = pvals_fdr
+pval_fdr_np_array
+    # Out[59]: 
+    # array([[1.        , 0.60466868, 0.60466868, 0.67279231, 0.83693474],
+    #        [0.30233434, 1.        , 0.68364733, 0.60466868, 0.64468775],
+    #        [0.1859506 , 0.6152826 , 1.        , 0.60466868, 0.60466868],
+    #        [0.53823384, 0.27474848, 0.13076814, 1.        , 0.61383887],
+    #        [0.83693474, 0.45128143, 0.07841368, 0.36830332, 0.        ]])
+
+pval_fdr_np_array[(mask.T)] = pvals_fdr
+pval_fdr_np_array
+    # Out[61]: 
+    # array([[1.        , 0.60466868, 0.60466868, 0.67279231, 0.83693474],
+    #        [0.60466868, 1.        , 0.68364733, 0.60466868, 0.64468775],
+    #        [0.60466868, 0.67279231, 1.        , 0.60466868, 0.60466868],
+    #        [0.83693474, 0.68364733, 0.60466868, 1.        , 0.61383887],
+    #        [0.64468775, 0.60466868, 0.60466868, 0.61383887, 0.        ]])
+
+
+# to initially get a pandas datarame with a similar shape.
+pval_fdr_matrix = pval.copy()
+pval_fdr_matrix.iloc[:, :] = pval_fdr_np_array
+
+# again the same error occurs.
+# np.fill_diagonal(pval_fdr_matrix.values, np.nan)
+    # ValueError: underlying array is read-only
+
+# filling the diagonal line with NaN , as '1' is meaningless.
+pval_fdr_matrix_arr = pval_fdr_matrix.to_numpy().copy()  # force, creating a writable copy
+np.fill_diagonal( pval_fdr_matrix_arr , np.nan )
+pval_fdr_matrix.iloc[:, :] = pval_fdr_matrix_arr
+
+
+# these are the multiple-test corrected p-values.
+pval_fdr_matrix
+    # Out[71]: 
+    #              HMGB1+_%  NGAL+_%  Casp3+_%  Zo-1+_%  Syndecan+_%
+    # HMGB1+_%          NaN 0.604669  0.604669 0.672792     0.836935
+    # NGAL+_%      0.604669      NaN  0.683647 0.604669     0.644688
+    # Casp3+_%     0.604669 0.672792       NaN 0.604669     0.604669
+    # Zo-1+_%      0.836935 0.683647  0.604669      NaN     0.613839
+    # Syndecan+_%  0.644688 0.604669  0.604669 0.613839          NaN
+
+# %%%'
+
+pval_fdr_matrix.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\pval_fdr_matrix.pkl' )
+pval_fdr_matrix = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\pval_fdr_matrix.pkl' )
+
+pval_fdr_matrix.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\correlation\pval_fdr_matrix.xlsx' )
+
+
+# %%%'
+
+# Create a custom annotation matrix 
+labels = corr.round(2).astype(str)
+
+column_labels = [ col[:-2] for col in corr.columns ]
+
+column_labels
+    # Out[25]: ['HMGB1+', 'NGAL+', 'Casp3+', 'Zo-1+', 'Syndecan+']]
+
+# %%% plot
+
+
+# Plot the heatmap.
+plt.figure(figsize=( 9 , 8 ))
+ax = sns.heatmap(
+                    corr, 
+                    annot=labels,     # Use our new custom labels (e.g., "0.75 ***")
+                    fmt='',           # IMPORTANT: Set fmt='' to use string annotations
+                    
+                    cmap='coolwarm',
+                    vmin=-1, 
+                    vmax=1,
+                    
+                    xticklabels = column_labels,
+                    yticklabels = column_labels,
+                    annot_kws={"size": 11} 
+)
+
+plt.xticks(rotation=45, ha='right')
+plt.yticks(rotation=0)
+ax.set_title(' Pairwise Spearman ranked correlation coefficients of \n'
+             ' individual biomarkers in multiplex immunoassay ', 
+             fontsize=20
+             )
+plt.tight_layout()
+
+# %%%'
+
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\correlation\correlation_individual_markers_multiplex.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\multiplex\correlation\correlation_individual_markers_multiplex.svg' )
 
 
 # %% melt
@@ -399,7 +611,7 @@ multiplex_8 = pd.melt(
                         value_name = 'cnp'  # cell umber percentage
 )
 
-# %%
+# %%'
 
 multiplex_8.shape
     # Out[74]: (300, 4)
@@ -416,7 +628,7 @@ multiplex_8[:4]
 
 multiplex_8.to_pickle( r'U:\kidney\histology\multiplex\multiplex_8.pkl' )
 
-# %%
+# %%'
 
 
 
