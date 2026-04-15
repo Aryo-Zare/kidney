@@ -40,9 +40,9 @@ df_NGAL_4 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\ELISA\d
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "SCS-HTK": "green", 
+                    "SCS-HTK": "orange", 
                     "SCS-Omnisol": "blue", 
-                    "NMP-Omnisol": "red" 
+                    "NMP-Omnisol": "green" 
 }
 
 
@@ -52,7 +52,7 @@ custom_palette = {
 # dodge : 0.4 : makes a higher dodge , but at the cost of entangled connection lines !!
 g = sns.catplot( 
                 kind ='point',
-                data = df_NGAL_3 ,
+                data = df_NGAL_4 ,
                 x='time' , 
                 y='value' ,  # choose between : 'value' , 'value_bc' , 'value_yjt', 'value_bc_yjt'
                 hue="treatment" ,
@@ -141,10 +141,39 @@ plt.tight_layout( rect=[0, 0, 0.75 , 1] )
 
 # %%
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\NGAL.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\NGAL.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\NGAL.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\NGAL.svg' )
 
 
-# %%
+# %% number of values
 
+pivot_counts_NGAL = (
+    df_NGAL_4
+    .groupby(["treatment", "time"])
+    .agg(n_values=("value", "count"))
+    .reset_index()
+    .pivot_table(
+        index="time",
+        columns=["treatment"],
+        values="n_values",
+        fill_value=0
+    )
+)
+
+
+pivot_counts_NGAL_2 = pivot_counts_NGAL.astype(int)
+
+pivot_counts_NGAL_2
+    # Out[27]: 
+    # treatment     SCS-HTK  SCS-Omnisol  NMP-Omnisol
+    # time                                           
+    # Explantation        6            6            5
+    # POD_1               6            6            6
+    # POD_3               6            6            5
+    # POD_7               3            3            5
+
+pivot_counts_NGAL_2.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\number_of_values\pivot_counts_NGAL_2.xlsx' )
+
+
+# %%'
 

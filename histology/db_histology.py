@@ -2,7 +2,7 @@
 
 # %%
 
-df_hist_4 = pd.read_pickle( r'U:\kidney\histology\df_hist_4.pkl' )
+df_hist_4 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histology\df_hist_4.pkl' )
 
 # %%
 

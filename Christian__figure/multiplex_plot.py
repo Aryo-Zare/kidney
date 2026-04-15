@@ -50,9 +50,9 @@ multiplex_13 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\hist
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "SCS-HTK": "green", 
+                    "SCS-HTK": "orange", 
                     "SCS-Omnisol": "blue", 
-                    "NMP-Omnisol": "red" 
+                    "NMP-Omnisol": "green" 
 }
 
 
@@ -312,8 +312,8 @@ plt.tight_layout( rect=[0, 0, 0.8 , 1] )
 
 # %%'
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\multiplex.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\multiplex.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\multiplex.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\multiplex.svg' )
 
 
 # %%'
@@ -331,6 +331,37 @@ multiplex_13.groupby('treatment', as_index=False)['cnp'].mean()
     # 1  SCS-Omnisol 0.673771
     # 2  NMP-Omnisol 0.914337
 
-# %%
+# %% number of values
+
+pivot_counts_multiplex = (
+    multiplex_13
+    .groupby(["biomarker", "treatment"])
+    .agg(n_values=("cnp", "count"))
+    .reset_index()
+    .pivot_table(
+        index="biomarker",
+        columns=["treatment"],
+        values="n_values",
+        fill_value=0
+    )
+)
+
+
+pivot_counts_multiplex_2 = pivot_counts_multiplex.astype(int)
+
+pivot_counts_multiplex_2
+    # Out[34]: 
+    # treatment    SCS-HTK  SCS-Omnisol  NMP-Omnisol
+    # biomarker                                     
+    # HMGB1+_%           7            6            5
+    # NGAL+_%            7            6            5
+    # Casp3+_%           7            6            5
+    # Zo-1+_%            7            6            5
+    # Syndecan+_%        7            6            5
+
+pivot_counts_multiplex_2.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\number_of_values\pivot_counts_multiplex_2.xlsx' )
+
+
+# %%'
 
 

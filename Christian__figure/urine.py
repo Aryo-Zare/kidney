@@ -1,4 +1,6 @@
 
+# all are urine ( not serum ) values.
+
 # %%'
 
 # df_urine_8_3 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\BG\df_urine_8_3.pkl' )
@@ -136,9 +138,9 @@ df_urine_all = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manu
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "SCS-HTK": "green", 
+                    "SCS-HTK": "orange", 
                     "SCS-Omnisol": "blue", 
-                    "NMP-Omnisol": "red" 
+                    "NMP-Omnisol": "green" 
 }
 
 
@@ -146,7 +148,7 @@ custom_palette = {
 
 # after combining the urinalysis & release-volume dataframes : the 2 dataframes have different x-axis ( 'Time' ) values.
 # if defining a single cateogircal order ( TI , explanataion , pod-1 , ...  ) :
-    # those suplots without  'TI' or 'explanataion' will irrelevantly havean extra tick for the abscent category with empty data on it.
+    # those suplots without  'TI' or 'explanataion' will irrelevantly have an extra tick for the abscent category with empty data on it.
 # so the 'Time' order should be defined separatly for each 'metric' !
 
 
@@ -272,9 +274,9 @@ handles , labels = ax0.get_legend_handles_labels()
 # gray patch
 # Add the proxy patch
 # for the normal ranges.
-normal_patch = mpatches.Patch(color='lightgray', alpha=0.4, label='Normal range')
+normal_patch = mpatches.Patch(color='lightgray', alpha=0.4, label='Physiological range')
 handles.append(normal_patch)
-labels.append("Normal range")
+labels.append("Physiological range")
 
 # frameon : the frame around the whole legend area.
 g.fig.legend( 
@@ -335,7 +337,7 @@ for ax , i in zip( g.axes.flat , unit ) :
 # %%'  normal range
 
 g.col_names
-    # Out[58]: ['Urea_serum', 'Creatinin_serum', 'Total_protein_serum', 'CRP_serum']
+    # Out[58]: ['Urea_serum', 'Creatinin_serum', 'Total_protein_serum', 'CRP_serum']    #  example: no serum values in this document !
 
 # replace these with your real metric names & numeric limits
 normal_ranges = {
@@ -357,7 +359,7 @@ for ax , metric in zip( g.axes.flatten() , g.col_names ):
 # %%'
 
 # x= : the x location of the text in figure coordinates.
-# plt.suptitle( 'Serum values across time' , x=0.4 , fontsize=24 )
+# plt.suptitle( 'Serum values across time' , x=0.4 , fontsize=24 )         #  example: no serum values in this document !
 
 
 # %%'
@@ -406,13 +408,54 @@ plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\urine_all.pdf' )   # serum_values
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\urine_all.svg' ) 
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\urine_all.pdf' )   
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\urine_all.svg' ) 
+
+# %%'  number of values
+
+pivot_counts_urine = (
+    df_urine_all
+    .groupby(["metric", "treatment", "time"])
+    .agg(n_values=("value", "count"))
+    .reset_index()
+    .pivot_table(
+        index="time",
+        columns=["metric", "treatment"],
+        values="n_values",
+        fill_value=0
+    )
+)
+
+
+pivot_counts_urine_2 = pivot_counts_urine.astype(int)
+
+pivot_counts_urine_2_T = pivot_counts_urine_2.T
+
+pivot_counts_urine_2_T
+    # Out[51]: 
+    # time                   TI  Explantation  POD_1  ...  POD_5  POD_6  POD_7
+    # metric    treatment                             ...                     
+    # Urea      SCS-HTK       0             7      7  ...      7      7      6
+    #           SCS-Omnisol   0             6      6  ...      6      6      6
+    #           NMP-Omnisol   0             6      5  ...      5      5      5
+    # Creatinin SCS-HTK       0             7      7  ...      7      7      6
+    #           SCS-Omnisol   0             6      6  ...      6      6      6
+    #           NMP-Omnisol   0             6      5  ...      5      5      5
+    # protein   SCS-HTK       0             7      7  ...      7      7      6
+    #           SCS-Omnisol   0             6      6  ...      6      6      6
+    #           NMP-Omnisol   0             6      5  ...      5      5      5
+    # release   SCS-HTK       4             0      6  ...      7      7      6
+    #           SCS-Omnisol   2             0      6  ...      6      6      6
+    #           NMP-Omnisol   5             0      6  ...      5      5      5
+    # density   SCS-HTK       7             0      7  ...      7      7      6
+    #           SCS-Omnisol   6             0      6  ...      6      6      6
+    #           NMP-Omnisol   6             0      6  ...      5      5      5
+    
+    # [15 rows x 9 columns]
+
+pivot_counts_urine_2.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\number_of_values\pivot_counts_urine_2.xlsx' )
+pivot_counts_urine_2_T.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\number_of_values\pivot_counts_urine_2_T.xlsx' )
+
 
 # %%'
-
-
-
-
-# %%
 

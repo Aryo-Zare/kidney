@@ -17,6 +17,8 @@
 # # Define the correct order of pathological categories
 # # here, homerrheage comes first !
 # # od : ordered
+# # cat : was first introduced here : C:\code\kidney\histology\extract_histology.py
+
 # cat_order_3 = [  'cat_2', 'cat_1', 'cat_3', 'cat_4' , 'cat_6' , 'cat_5']
 # df_hist_7['cat'] = pd.Categorical( 
 #                                             df_hist_7['cat'] , 
@@ -63,9 +65,9 @@ df_hist_9 = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\histolo
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "SCS-HTK": "green", 
+                    "SCS-HTK": "orange", 
                     "SCS-Omnisol": "blue", 
-                    "NMP-Omnisol": "red" 
+                    "NMP-Omnisol": "green" 
 }
 
 
@@ -264,8 +266,8 @@ plt.tight_layout( rect=[0, 0, 0.77 , 1] )
 
 # bc : baseline corrected
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\histopatholoy.pdf' )
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\histopatholoy.svg' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\histopatholoy.pdf' )
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\histopatholoy.svg' )
 
 
 # %%'
@@ -346,7 +348,7 @@ df_hist_9.groupby(['treatment', 'sample_ID'])['value'].sum()
     # Name: value, dtype: float64
 
 
-# %%' mean of means
+# %% mean of means
 
 # mean of means
 # mean of means of each category ( subplot )( edema , lymphocyte infirltration , ...  ).
@@ -405,6 +407,51 @@ df_mean_of_means
     # 1  SCS-Omnisol 2.163889
     # 2  NMP-Omnisol 1.550000
 
-# %%'
 
+df_SD_of_means = (
+    df_mean_tc
+    .groupby('treatment', as_index=False)['value']
+    .std()
+)
+
+df_SD_of_means
+    # Out[79]: 
+    #      treatment     value
+    # 0      SCS-HTK  0.448732
+    # 1  SCS-Omnisol  0.559307
+    # 2  NMP-Omnisol  0.427785
+
+# %% number of values
+
+pivot_counts_hist = (
+    df_hist_9
+    .groupby(["cat", "treatment"])
+    .agg(n_values=("value", "count"))
+    .reset_index()
+    .pivot_table(
+        index="cat",
+        columns=["treatment"],
+        values="n_values",
+        fill_value=0
+    )
+)
+
+pivot_counts_hist_2 =  pivot_counts_hist.astype(int)
+
+pivot_counts_hist_2
+    # Out[45]: 
+    # treatment  SCS-HTK  SCS-Omnisol  NMP-Omnisol
+    # cat                                         
+    # cat_2            7            5            5
+    # cat_1            7            6            5
+    # cat_3            7            6            5
+    # cat_4            7            6            5
+    # cat_6            7            6            5
+    # cat_5            7            6            5
+
+
+pivot_counts_hist_2.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\number_of_values\pivot_counts_hist_2.xlsx' )
+
+
+# %%'
 

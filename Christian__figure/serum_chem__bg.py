@@ -1,80 +1,93 @@
 
 # a combined plot of serum chemistry items & blood-gas.
+# the datframe : is generated & saved in a few cells further.
 
 # %%
 
-# remove ucr ( urea / creatinine )
-df1_filtered = df_serum_chem_ucr_value_3_ro[
-    df_serum_chem_ucr_value_3_ro['metric'] != 'ucr'
-].copy()
+# all items in this combined cell are commented.
 
-# %%
+# # remove ucr ( urea / creatinine )
+# df1_filtered = df_serum_chem_ucr_value_3_ro[
+#     df_serum_chem_ucr_value_3_ro['metric'] != 'ucr'
+# ].copy()
 
-metrics_keep = ['pH', 'K+']
+# # %%
 
-df2_filtered = df_bg_8_4[
-    df_bg_8_4['metric'].isin(metrics_keep)
-].copy()
+# metrics_keep = ['pH', 'K+']
 
-
-# %%
-
-# concatenate the common columns ( only columns from the 1st dataframe ).
-
-common_cols = df1_filtered.columns.intersection(df2_filtered.columns)
+# df2_filtered = df_bg_8_4[
+#     df_bg_8_4['metric'].isin(metrics_keep)
+# ].copy()
 
 
-df1_common = df1_filtered[common_cols]
-df2_common = df2_filtered[common_cols]
+# # %%
 
-# %%
+# # concatenate the common columns ( only columns from the 1st dataframe ).
 
-
-df_serum_chem__bg = pd.concat(
-    [df1_common, df2_common],
-    ignore_index=True
-)
+# common_cols = df1_filtered.columns.intersection(df2_filtered.columns)
 
 
-# %%
+# df1_common = df1_filtered[common_cols]
+# df2_common = df2_filtered[common_cols]
 
-# sanity checks
-
-df_serum_chem__bg['metric'].unique()
-    # Out[51]: 
-    # array(['Urea_serum', 'Creatinin_serum', 'Total_protein_serum',
-    #        'CRP_serum', 'pH', 'K+'], dtype=object)
-
-df_serum_chem__bg.columns
-    # Out[52]: Index(['sample_ID', 'treatment', 'group', 'time', 'metric', 'value'], dtype='object')
-
-# %%
-
-metric_order = [ 'Urea_serum', 'Creatinin_serum', 'Total_protein_serum', 'CRP_serum', 'pH', 'K+' ]
-df_serum_chem__bg['metric'] = pd.Categorical(
-                                            df_serum_chem__bg['metric'],
-                                            categories=metric_order,
-                                            ordered=True
-)
+# # %%
 
 
-df_serum_chem__bg['metric'].unique()
-    # Out[55]: 
-    # ['Urea_serum', 'Creatinin_serum', 'Total_protein_serum', 'CRP_serum', 'pH', 'K+']
-    # Categories (6, object): ['Urea_serum' < 'Creatinin_serum' < 'Total_protein_serum' < 'CRP_serum' < 'pH' <
-    #                          'K+']
+# df_serum_chem__bg = pd.concat(
+#     [df1_common, df2_common],
+#     ignore_index=True
+# )
+
+
+# # %%
+
+# # sanity checks
+
+# df_serum_chem__bg['metric'].unique()
+#     # Out[51]: 
+#     # array(['Urea_serum', 'Creatinin_serum', 'Total_protein_serum',
+#     #        'CRP_serum', 'pH', 'K+'], dtype=object)
+
+# df_serum_chem__bg.columns
+#     # Out[52]: Index(['sample_ID', 'treatment', 'group', 'time', 'metric', 'value'], dtype='object')
+
+# # %%
+
+# metric_order = [ 'Urea_serum', 'Creatinin_serum', 'Total_protein_serum', 'CRP_serum', 'pH', 'K+' ]
+# df_serum_chem__bg['metric'] = pd.Categorical(
+#                                             df_serum_chem__bg['metric'],
+#                                             categories=metric_order,
+#                                             ordered=True
+# )
+
+
+# df_serum_chem__bg['metric'].unique()
+#     # Out[55]: 
+#     # ['Urea_serum', 'Creatinin_serum', 'Total_protein_serum', 'CRP_serum', 'pH', 'K+']
+#     # Categories (6, object): ['Urea_serum' < 'Creatinin_serum' < 'Total_protein_serum' < 'CRP_serum' < 'pH' <
+#     #                          'K+']
 
 # %%
 
 df_serum_chem__bg.to_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\df_serum_chem__bg.pkl' )
+df_serum_chem__bg = pd.read_pickle( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\df_serum_chem__bg.pkl' )
+
+df_serum_chem__bg[:5]
+    # Out[6]: 
+    #   sample_ID treatment group          time      metric  value
+    # 0      ZC04   SCS-HTK     1  Explantation  Urea_serum   2.57
+    # 1      ZC04   SCS-HTK     1         POD_1  Urea_serum  15.60
+    # 2      ZC04   SCS-HTK     1         POD_2  Urea_serum  18.73
+    # 3      ZC04   SCS-HTK     1         POD_3  Urea_serum  24.36
+    # 4      ZC04   SCS-HTK     1         POD_4  Urea_serum  29.00
 
 # %%
 
 # Define a custom palette for the hue levels in the desired order
 custom_palette = { 
-                    "SCS-HTK": "green", 
+                    "SCS-HTK": "orange", 
                     "SCS-Omnisol": "blue", 
-                    "NMP-Omnisol": "red" 
+                    "NMP-Omnisol": "green" 
 }
 
 # %% grid
@@ -125,9 +138,9 @@ handles , labels = ax0.get_legend_handles_labels()
 # gray patch
 # Add the proxy patch
 # for the normal ranges.
-normal_patch = mpatches.Patch(color='lightgray', alpha=0.4, label='Normal range')
+normal_patch = mpatches.Patch(color='lightgray', alpha=0.4, label='Physiological range')
 handles.append(normal_patch)
-labels.append("Normal range")
+labels.append("Physiological range")
 
 # frameon : the frame around the whole legend area.
 g.fig.legend( 
@@ -256,10 +269,85 @@ plt.tight_layout( rect=[0, 0, 0.82 , 1] )
 # %%
 
 
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\serum_chem__bg\serum_chem__bg.pdf' )   # serum_values
-plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\serum_chem__bg\serum_chem__bg.svg' ) 
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\serum_chem__bg.pdf' )   # serum_values
+plt.savefig( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\Christian__figure\2026_04_15\serum_chem__bg.svg' )   # serum_values
 
 
-# %%
+# %% number of values
 
+pivot_counts = (
+    df_serum_chem__bg
+    .groupby(["metric", "treatment", "time"])
+    .agg(n_values=("value", "count"))
+    .reset_index()
+    .pivot_table(
+        index="time",
+        columns=["metric", "treatment"],
+        values="n_values",
+        fill_value=0
+    )
+)
+
+
+pivot_counts
+    # Out[8]: 
+    # metric       Urea_serum                          ...      K+                        
+    # treatment       SCS-HTK SCS-Omnisol NMP-Omnisol  ... SCS-HTK SCS-Omnisol NMP-Omnisol
+    # time                                             ...                                
+    # Explantation        7.0         6.0         6.0  ...     7.0         6.0         6.0
+    # POD_1               7.0         6.0         6.0  ...     7.0         6.0         6.0
+    # POD_2               7.0         6.0         6.0  ...     7.0         5.0         6.0
+    # POD_3               7.0         6.0         6.0  ...     7.0         5.0         5.0
+    # POD_4               7.0         6.0         5.0  ...     7.0         6.0         4.0
+    # POD_5               6.0         6.0         5.0  ...     6.0         6.0         5.0
+    # POD_6               7.0         6.0         5.0  ...     5.0         6.0         5.0
+    # POD_7               6.0         6.0         5.0  ...     5.0         5.0         5.0
+
+
+pivot_counts_2 = pivot_counts.astype(int)
+
+pivot_counts_2.head()
+    # Out[10]: 
+    # metric       Urea_serum                          ...      K+                        
+    # treatment       SCS-HTK SCS-Omnisol NMP-Omnisol  ... SCS-HTK SCS-Omnisol NMP-Omnisol
+    # time                                             ...                                
+    # Explantation          7           6           6  ...       7           6           6
+    # POD_1                 7           6           6  ...       7           6           6
+    # POD_2                 7           6           6  ...       7           5           6
+    # POD_3                 7           6           6  ...       7           5           5
+    # POD_4                 7           6           5  ...       7           6           4
+
+pivot_counts_2_T = pivot_counts_2.T
+
+pivot_counts_2_T
+    # Out[48]: 
+    # time                             Explantation  POD_1  ...  POD_6  POD_7
+    # metric              treatment                         ...              
+    # Urea_serum          SCS-HTK                 7      7  ...      7      6
+    #                     SCS-Omnisol             6      6  ...      6      6
+    #                     NMP-Omnisol             6      6  ...      5      5
+    # Creatinin_serum     SCS-HTK                 7      7  ...      7      6
+    #                     SCS-Omnisol             6      6  ...      6      6
+    #                     NMP-Omnisol             6      6  ...      5      5
+    # Total_protein_serum SCS-HTK                 7      7  ...      7      6
+    #                     SCS-Omnisol             6      5  ...      6      5
+    #                     NMP-Omnisol             6      6  ...      5      5
+    # CRP_serum           SCS-HTK                 7      7  ...      6      6
+    #                     SCS-Omnisol             6      6  ...      6      6
+    #                     NMP-Omnisol             6      6  ...      5      5
+    # pH                  SCS-HTK                 7      7  ...      5      5
+    #                     SCS-Omnisol             6      6  ...      6      5
+    #                     NMP-Omnisol             6      6  ...      5      5
+    # K+                  SCS-HTK                 7      7  ...      5      5
+    #                     SCS-Omnisol             6      6  ...      6      5
+    #                     NMP-Omnisol             6      6  ...      5      5
+
+
+# %%%'
+
+pivot_counts_2.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\number_of_values\df_serum_chem__bg_pivot_counts_2.xlsx' )
+pivot_counts_2_T.to_excel( r'F:\OneDrive - Uniklinik RWTH Aachen\kidney\manuscript\number_of_values\df_serum_chem__bg_pivot_counts_2_T.xlsx' )
+
+
+# %%'
 
