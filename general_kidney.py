@@ -88,12 +88,13 @@ bw['treatment'].unique()
     # array(['DBD-HTK', 'DBD-Ecosol', '-', 'DCD-HTK', 'DCD-Ecoflow', 'TBB',
     #        'DBD-Ecoflow', 'DCD-Ecosol', 'NMP', nan], dtype=object)
 
-# %%
+# %% sample size
 
 
 mask = \
         ( bw["treatment"].isin(["DBD-HTK", "DBD-Ecosol", "NMP"]) ) & \
         ( ~bw["sample_ID"].isin([ "ZC06", "ZC6" , "ZC28" , 'ZC27' , 'ZC60' , 'ZC62' , 'ZC64' , 'ZC65' ]) )   # "ZC6"
+        # note : 'ZC6' & 'ZC06' are both typed here !
 
 
 bw_2 = bw[mask]
